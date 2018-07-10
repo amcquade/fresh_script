@@ -25,3 +25,6 @@ Running the program is simple. The first time you run it, you will be asked for 
 ```
 python fresh.py
 ```
+## Contributing
+
+I appreciate any help and support. Feel free to [fork](https://github.com/amcquade/fresh_script#fork-destination-box) and [create a pull request](https://github.com/amcquade/fresh_script/compare)
