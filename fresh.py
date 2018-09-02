@@ -76,12 +76,12 @@ finally:
     tracks = []
 
     print('Welcome to the HipHopHeads Fresh Script')
-    choice = input('Enter 1 to sort by hot, 2 to sort by new: ').strip()
+    choice = input('Enter 1 to sort by hot, 2 to sort by new: ')
     l = int(input('enter post limit: '))
 
-    if choice == '1':
+    if choice == 1:
         sub_choice = subreddit.hot(limit=l)
-    elif choice == '2':
+    elif choice == 2:
         sub_choice = subreddit.new(limit=l)
     else:
         print ("option not supplied")

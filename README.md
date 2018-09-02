@@ -1,12 +1,12 @@
 # fresh_script
 
-This program will search for spotify tracks posted in the HipHopHeads subreddit and add them to a playlist of your choice.
+This program will search for spotify tracks posted in the HipHopHeads subreddit and add them to a playlist of your choice. HipHopHeads is a subreddit dedicated to everything hiphop, including the latest mixtapes, videos, news, and anything else hip hop related from your favorite artists.
 
 ## Getting Started
 
 ### Prerequisites
 
-You will need to setup a Spotify developer account and register your app. You will need the following things for this code:
+This project uses Python3. You will need to setup a Spotify developer account and register your app. You will need the following things for this code:
 * client id
 * client secret
 * your spotify username
@@ -14,8 +14,9 @@ You will need to setup a Spotify developer account and register your app. You wi
 * the url you want to redirect to for authentication, i.e. http://google.com/
  You will also need to setup a reddit instance with praw. [Heres](https://pythonforengineers.com/build-a-reddit-bot-part-1/) a useful guide I used to do this. 
 ```
-pip install praw
-pip install spotipy
+pip3 install praw
+pip3 install spotipy
+pip3 install configparser
 ```
 
 ### Running the script
