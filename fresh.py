@@ -14,7 +14,8 @@ else:
     print ("no track supplied")
     sys.exit()
 '''
-# config 
+# config
+
 try:
     if not os.path.isfile('.config.ini'):
         client_id = input('Enter your Client ID: ').strip()
@@ -48,6 +49,7 @@ try:
         redirect = parser.get('spotify', 'redirect_uri')
 
 
+
     '''
     TODO
     config['youtube'] = {}
@@ -76,7 +78,8 @@ finally:
     tracks = []
 
     print('Welcome to the HipHopHeads Fresh Script')
-    choice = input('Enter 1 to sort by hot, 2 to sort by new: ')
+    #added an int casting
+    choice = int(input('Enter 1 to sort by hot, 2 to sort by new: '))
     l = int(input('enter post limit: '))
 
     if choice == 1:
@@ -88,10 +91,12 @@ finally:
         sys.exit()    
 
     for sub in sub_choice:
+        #print(sub.domain)
         if sub.domain == "open.spotify.com":
 
             # check if post is a track or album
             isTrack = re.search('track', sub.url)
+            print(isTrack)
             if isTrack != None:
                 print("Post: ", sub.title)
                 print("URL: ", sub.url)
@@ -109,9 +114,21 @@ finally:
     # handle remove duplicates of tracks before adding new tracks
     if tracks is not None:
         try:
-            spotifyObj.user_playlist_remove_all_occurrences_of_tracks(username, playlist, tracks)          
+            #retrive information of the tracks in user's playlist
+            existing_tracks = spotifyObj.user_playlist_tracks(username,playlist)
+            #count the number of tracks in the playlist
+            n_old_tracks =len(existing_tracks['items'])
+            spotifyObj.user_playlist_remove_all_occurrences_of_tracks(username, playlist, tracks)
             results = spotifyObj.user_playlist_add_tracks(username, playlist, tracks)
+            #retrieve the information of the tracks after adding them
+            current_tracks = spotifyObj.user_playlist_tracks(username,playlist)
+            #count the number of new tracks 
+            n_new_tracks = abs(n_old_tracks - len(current_tracks['items']))
+
+
         except:
             print("an error has occured removing or adding new tracks")    
         print(tracks)
         print(results)
+        print('New Tracks:')
+        print(n_new_tracks)
