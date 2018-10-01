@@ -1,9 +1,11 @@
+
 import praw
 import re
 import sys, os, json, webbrowser
 import spotipy
 import spotipy.util as util
 from configparser import ConfigParser
+
 import argparse
 
 # convert a string to a bool
@@ -112,6 +114,7 @@ def main():
     spotifyObj.trace = False
     tracks = []
 
+
     if verbose:
         print('Welcome to the HipHopHeads Fresh Script')
     
@@ -120,7 +123,7 @@ def main():
 
     if l is None:    
         l = int(input('enter post limit: '))
-
+        
     if choice == 1:
         sub_choice = subreddit.hot(limit=l)
     elif choice == 2:
@@ -130,10 +133,12 @@ def main():
         sys.exit()
 
     for sub in sub_choice:
+        #print(sub.domain)
         if sub.domain == "open.spotify.com":
 
             # check if post is a track or album
             isTrack = re.search('track', sub.url)
+            print(isTrack)
             if isTrack != None:
                 if verbose:
                     print("Post: ", sub.title)
@@ -152,9 +157,20 @@ def main():
     # handle remove duplicates of tracks before adding new tracks
     if tracks != []:
         try:
+            #retrive information of the tracks in user's playlist
+            existing_tracks = spotifyObj.user_playlist_tracks(user.username,user.playlist)
+            #count the number of tracks in the playlist
+            n_old_tracks =len(existing_tracks['items'])
             spotifyObj.user_playlist_remove_all_occurrences_of_tracks(user.username, user.playlist, tracks)
             results = spotifyObj.user_playlist_add_tracks(user.username, user.playlist, tracks)
-        except:
+            #retrieve the information of the tracks after adding them
+            current_tracks = spotifyObj.user_playlist_tracks(user.username,user.playlist)
+            #count the number of new tracks 
+            n_new_tracks = abs(n_old_tracks - len(current_tracks['items']))
+            print('New Tracks:')
+            print(n_new_tracks)
+        except: 
+
             if results == [] and verbose:
                 print("no new tracks have been added.")
             else:
@@ -163,5 +179,6 @@ def main():
             print(tracks)
             
             print(results)
+            
 if __name__ == '__main__':
     main()
