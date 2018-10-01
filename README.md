@@ -13,11 +13,8 @@ This project uses Python3. You will need to setup a Spotify developer account an
 * playlist id of the playlist you want to add the tracks to
 * the url you want to redirect to for authentication, i.e. http://google.com/
  You will also need to setup a reddit instance with praw. [Heres](https://pythonforengineers.com/build-a-reddit-bot-part-1/) a useful guide I used to do this. 
-```
-pip3 install praw
-pip3 install spotipy
-pip3 install configparser
-```
+
+`pip3 install praw spotipy configparser`
 
 ### Running the script
 
