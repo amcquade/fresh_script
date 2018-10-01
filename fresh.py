@@ -90,7 +90,7 @@ def main():
     # token = getToken(user.username, user.client_id, user.client_secret, user.redirect)    
 
     argparser = argparse.ArgumentParser()
-    argparser.add_argument("-s", "--sort", help="sort by hot or new", type=int)
+    argparser.add_argument("-s", "--sort", help="sort by hot or new", type=str, choices=('new','hot'))
     argparser.add_argument("-l", "--limit", help="how many posts to grab", type=int)
     argparser.add_argument("-v", "--verbose", help="output songs being added and other info", type=str2bool)
  
@@ -116,14 +116,14 @@ def main():
         print('Welcome to the HipHopHeads Fresh Script')
     
     if choice is None:
-        choice = int(input('Enter 1 to sort by hot, 2 to sort by new: '))
+        choice = int(input('Enter \'hot\' to sort by hot or \'new\' to sort by new: '))
 
     if l is None:    
         l = int(input('enter post limit: '))
 
-    if choice == 1:
+    if choice.lower() == 'hot':
         sub_choice = subreddit.hot(limit=l)
-    elif choice == 2:
+    elif choice.lower() 'new':
         sub_choice = subreddit.new(limit=l)
     else:
         print ("option not supplied")
