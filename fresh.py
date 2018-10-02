@@ -5,6 +5,7 @@ import spotipy
 import spotipy.util as util
 from configparser import ConfigParser
 import argparse
+from models import User
 
 # convert a string to a bool
 def str2bool(v):
@@ -14,16 +15,6 @@ def str2bool(v):
         return False
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
-
-# user obejct to hold the things 
-class User:
-    def __init__(self, username, client_id, client_secret, redirect, playlist):
-        self.username = username
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.redirect = redirect
-        self.playlist = playlist
-        self.token = getToken(username, client_id, client_secret, redirect)
 
 def createUser():
     # read config file
@@ -84,24 +75,17 @@ def getToken(username, client_id, client_secret, redirect):
 
 def main():
     user = createUser()
-    choice = None
-    l = None
-    verbose = True
     # token = getToken(user.username, user.client_id, user.client_secret, user.redirect)    
 
     argparser = argparse.ArgumentParser()
     argparser.add_argument("-s", "--sort", help="sort by hot or new", type=int)
     argparser.add_argument("-l", "--limit", help="how many posts to grab", type=int)
-    argparser.add_argument("-v", "--verbose", help="output songs being added and other info", type=str2bool)
- 
-    if(len(sys.argv) > 1):
-        args = argparser.parse_args()
-        if args.sort is not None:
-            choice = args.sort
-        if args.limit is not None:
-            l = args.limit            
-        if args.verbose is not None:
-            verbose = args.verbose
+    argparser.add_argument("-v", "--verbose", help="output songs being added and other info", action="store_true")
+    args = argparser.parse_args()
+    
+    verbose = True if args.verbose else False
+    l = args.limit if args.limit else False
+    choice = args.sort if args.sort else None
             
     # connect to reddit bot
     reddit = praw.Reddit('bot1')
@@ -115,10 +99,10 @@ def main():
     if verbose:
         print('Welcome to the HipHopHeads Fresh Script')
     
-    if choice is None:
+    if not choice:
         choice = int(input('Enter 1 to sort by hot, 2 to sort by new: '))
 
-    if l is None:    
+    if not l:    
         l = int(input('enter post limit: '))
 
     if choice == 1:
