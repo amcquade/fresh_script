@@ -80,12 +80,14 @@ def main():
     argparser = argparse.ArgumentParser()
     argparser.add_argument("-s", "--sort", help="sort by hot or new", type=int)
     argparser.add_argument("-l", "--limit", help="how many posts to grab", type=int)
+    argparser.add_argument("-t", "--threshold", help="only post with score above threshold", type=int)
     argparser.add_argument("-v", "--verbose", help="output songs being added and other info", action="store_true")
     args = argparser.parse_args()
     
     verbose = True if args.verbose else False
     l = args.limit if args.limit else False
     choice = args.sort if args.sort else None
+    threshold = args.threshold if args.threshold else None
             
     # connect to reddit bot
     reddit = praw.Reddit('bot1')
@@ -124,6 +126,10 @@ def main():
                     print("URL: ", sub.url)
                     print("Score: ", sub.score)
                     print("------------------------\n")
+		
+                # Discard post below threshold if given
+                if threshold and sub.score < threshold:
+                    continue
 
                 # handle possible query string in url
                 url = sub.url.split('?')
