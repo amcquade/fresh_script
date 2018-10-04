@@ -2,7 +2,6 @@ import praw
 import re
 import sys, os, json, webbrowser
 import spotipy
-import spotipy.util as util
 from configparser import ConfigParser
 import argparse
 from models import User
@@ -60,22 +59,10 @@ def createUser():
         print('config failure')
 
     return User(username, client_id, client_secret, redirect, playlist)
-            
-
-def getToken(username, client_id, client_secret, redirect):
-    try:
-        token = util.prompt_for_user_token(username, 'playlist-modify-public', client_id, client_secret , redirect)
-
-    except:
-        #os.remove(f".cache-{username}")
-        token = util.prompt_for_user_token(username, 'playlist-modify-public', client_id, client_secret, redirect)
-
-    return token
 
 
 def main():
     user = createUser()
-    # token = getToken(user.username, user.client_id, user.client_secret, user.redirect)    
 
     argparser = argparse.ArgumentParser()
     argparser.add_argument("-s", "--sort", help="sort by hot or new", type=int)
