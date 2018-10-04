@@ -1,4 +1,8 @@
-# user obejct to hold the things 
+import spotipy.util as util
+
+# user object to hold the things
+
+
 class User:
     def __init__(self, username, client_id, client_secret, redirect, playlist):
         self.username = username
@@ -6,4 +10,14 @@ class User:
         self.client_secret = client_secret
         self.redirect = redirect
         self.playlist = playlist
-        self.token = getToken(username, client_id, client_secret, redirect)
+        self.token = self.getToken()
+
+    def getToken(self):
+        try:
+            token = util.prompt_for_user_token(self.username, 'playlist-modify-public', self.client_id, self.client_secret, self.redirect)
+
+        except:
+            # os.remove(f".cache-{username}")
+            token = util.prompt_for_user_token(self.username, 'playlist-modify-public', self.client_id, self.client_secret, self.redirect)
+
+        return token
