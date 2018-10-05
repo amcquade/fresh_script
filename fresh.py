@@ -1,6 +1,6 @@
 import praw
 import re
-import sys, os, json, webbrowser
+import sys, os, json, webbrowser, textwrap
 import spotipy
 from configparser import ConfigParser
 import argparse
@@ -89,15 +89,32 @@ def main():
         print('Welcome to the HipHopHeads Fresh Script')
     
     if not choice:
-        choice = int(input('Enter 1 to sort by hot, 2 to sort by new: '))
+        inputPrompt = textwrap.dedent("""\
+        Enter the number of your desired sorting method:
+            1 - Hot
+            2 - New
+            3 - Rising
+            4 - Random Rising
+            5 - Controversial
+            6 - Top
+        """)
+        choice = int(input(inputPrompt))
 
     if not l:    
         l = int(input('enter post limit: '))
 
-    if choice == 1:
+    if choice is 1:
         sub_choice = subreddit.hot(limit=l)
-    elif choice == 2:
+    elif choice is 2:
         sub_choice = subreddit.new(limit=l)
+    elif choice is 3:
+        sub_choice = subreddit.rising(limit=l)
+    elif choice is 4:
+        sub_choice = subreddit.random_rising(limit=l)
+    elif choice is 5:
+        sub_choice = subreddit.controversial(limit = l)
+    elif choice is 6:
+        sub_choice = subreddit.top(limit=l)
     else:
         print ("option not supplied")
         sys.exit()
