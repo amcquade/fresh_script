@@ -69,9 +69,11 @@ def main():
     argparser.add_argument("-l", "--limit", help="how many posts to grab", type=int)
     argparser.add_argument("-t", "--threshold", help="only post with score above threshold", type=int)
     argparser.add_argument("-v", "--verbose", help="output songs being added and other info", action="store_true")
+    argparser.add_argument("-f", "--fresh", help="only add tracks with the [FRESH] tag", action="store_true")
     args = argparser.parse_args()
     
-    verbose = True if args.verbose else False
+    verbose = args.verbose
+    fresh = args.fresh
     l = args.limit if args.limit else False
     choice = args.sort if args.sort else None
     threshold = args.threshold if args.threshold else None
@@ -116,6 +118,10 @@ def main():
 		
                 # Discard post below threshold if given
                 if threshold and sub.score < threshold:
+                    continue
+
+                # If fresh flag given, discard post if not tagged [FRESH]
+                if fresh and "[FRESH]" not in sub.title:
                     continue
 
                 # handle possible query string in url
