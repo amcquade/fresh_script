@@ -96,6 +96,13 @@ def main():
     if not l:    
         l = int(input('enter post limit: '))
 
+    if not fresh:
+        fresh_input = input('Would you like to only add tracks tagged as [FRESH]? (y/n)')
+        if fresh_input.lower().strip() == "y":
+            fresh = True
+        else:
+            fresh = False
+
     if choice == 1:
         sub_choice = subreddit.hot(limit=l)
     elif choice == 2:
