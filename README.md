@@ -26,6 +26,18 @@ Running the program is simple. The first time you run it, you will be asked for 
 ```
 python fresh.py
 ```
+
+### Script arguments
+
+The following arguments can be passed to the script
+
+| Short | Long        | Type | Description |
+|-------|-------------|------|-------------|
+| -s    | --sort      | int  | Sort by hot (1), new (2), rising (3), random rising (4), controversion (5) or top (6) |
+| -l    | --limit     | int  | How many posts to grab |
+| -t    | --threshold | int  | Only posts with score above threshold |
+| -v    | --verbose   |      | Output songs being added and other info |
+
 ## Contributing
 
 I appreciate any help and support. Feel free to [fork](https://github.com/amcquade/fresh_script#fork-destination-box) and [create a pull request](https://github.com/amcquade/fresh_script/compare)
