@@ -146,8 +146,18 @@ def main():
     # handle remove duplicates of tracks before adding new tracks
     if tracks != []:
         try:
+            #retrive information of the tracks in user's playlist
+            existing_tracks = spotifyObj.user_playlist_tracks(user.username,user.playlist)
+            #count the number of tracks in the playlist
+            n_old_tracks =len(existing_tracks['items'])
             spotifyObj.user_playlist_remove_all_occurrences_of_tracks(user.username, user.playlist, tracks)
             results = spotifyObj.user_playlist_add_tracks(user.username, user.playlist, tracks)
+            #retrieve the information of the tracks after adding them
+            current_tracks = spotifyObj.user_playlist_tracks(user.username,user.playlist)
+            #count the number of new tracks 
+            n_new_tracks = abs(n_old_tracks - len(current_tracks['items']))
+            print('New Tracks:')
+            print(n_new_tracks)
         except:
             if results == [] and verbose:
                 print("no new tracks have been added.")
