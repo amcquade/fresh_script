@@ -38,6 +38,28 @@ The following arguments can be passed to the script
 | -t    | --threshold | int  | Only posts with score above threshold |
 | -v    | --verbose   |      | Output songs being added and other info |
 
+### Running the script using cron
+
+We can use cron to automatically run the script periodically in order to keep it up-to-date. You will need either a macOS computer or Linux server to use cron.
+
+1. Follow the `running the script` instructions to make sure your `.config.ini` file is generated with the required parameters
+2. Run `crontab -e` to open the cron editor, which is similar to vim
+3. Use the following format to create a line for your cron
+    ```
+    * * * * * command to be executed
+    - - - - -
+    | | | | |
+    | | | | ----- Day of week (0 - 7) (Sunday=0 or 7)
+    | | | ------- Month (1 - 12)
+    | | --------- Day of month (1 - 31)
+    | ----------- Hour (0 - 23)
+    ------------- Minute (0 - 59)
+    ```
+    For example, you would do the following to run this everyday at 9AM
+    ```
+    0 9 * * * python /home/jsmith/fresh.py
+    ```
+
 ## Contributing
 
 I appreciate any help and support. Feel free to [fork](https://github.com/amcquade/fresh_script#fork-destination-box) and [create a pull request](https://github.com/amcquade/fresh_script/compare)
