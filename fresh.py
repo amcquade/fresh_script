@@ -155,6 +155,7 @@ def main():
         try:
             spotifyObj.user_playlist_remove_all_occurrences_of_tracks(user.username, user.playlist, tracks)
             results = spotifyObj.user_playlist_add_tracks(user.username, user.playlist, tracks)
+            print{("{} tracks have been added.").format(len(tracks))
         except:
             if results == [] and verbose:
                 print("no new tracks have been added.")
