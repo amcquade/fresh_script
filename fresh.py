@@ -23,6 +23,7 @@ def createUser():
             client_secret = input('Enter your Client Secret: ').strip()
             username = input('Enter your Username: ').strip()
             playlist = input('Enter your Playlist ID: ').strip()
+                #request playlist ids, store as array and then set the playlist variable to a comma separated list
             redirect = input('Enter your Redirect URI: ').strip()
 
             config = ConfigParser()
@@ -44,7 +45,7 @@ def createUser():
 
             # spotify info
             username = parser.get('spotify', 'username')
-            playlist = parser.get('spotify', 'playlist_id')
+            playlist = parser.get('spotify', 'playlist_id') #returns a comma separated list of playlists
             client_id = parser.get('spotify', 'client_id')
             client_secret = parser.get('spotify', 'client_secret')
             redirect = parser.get('spotify', 'redirect_uri')
@@ -58,7 +59,7 @@ def createUser():
     except:
         print('config failure')
 
-    return User(username, client_id, client_secret, redirect, playlist)
+    return User(username, client_id, client_secret, redirect, playlist) #playlist represents c.s. list of playlists
 
 
 def main():
@@ -71,7 +72,7 @@ def main():
     argparser.add_argument("-ia", "--include-albums", help="include tracks from albums", action="store_true")
     argparser.add_argument("-v", "--verbose", help="output songs being added and other info", action="store_true")
     args = argparser.parse_args()
-    
+
     verbose = True if args.verbose else False
     l = args.limit if args.limit else False
     choice = args.sort if args.sort else None
@@ -89,7 +90,7 @@ def main():
 
     if verbose:
         print('Welcome to the HipHopHeads Fresh Script')
-    
+
     if not choice:
         inputPrompt = textwrap.dedent("""\
         Enter the number of your desired sorting method:
@@ -102,7 +103,7 @@ def main():
         """)
         choice = int(input(inputPrompt))
 
-    if not l:    
+    if not l:
         l = int(input('enter post limit: '))
 
     if choice is 1:
@@ -132,7 +133,7 @@ def main():
                     print("URL: ", sub.url)
                     print("Score: ", sub.score)
                     print("------------------------\n")
-		
+
                 # Discard post below threshold if given
                 if threshold and sub.score < threshold:
                     continue
@@ -153,6 +154,7 @@ def main():
     # handle remove duplicates of tracks before adding new tracks
     if tracks != []:
         try:
+            #convert comma separated list of laylists to array then for loop for every playlist
             spotifyObj.user_playlist_remove_all_occurrences_of_tracks(user.username, user.playlist, tracks)
             results = spotifyObj.user_playlist_add_tracks(user.username, user.playlist, tracks)
         except:
@@ -162,7 +164,7 @@ def main():
                 print("an error has occured removing or adding new tracks")
         if verbose:
             print(tracks)
-            
+
             print(results)
 if __name__ == '__main__':
     main()
