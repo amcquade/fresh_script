@@ -27,6 +27,19 @@ Running the program is simple. The first time you run it, you will be asked for 
 python fresh.py
 ```
 
+### Script arguments
+
+The following arguments can be passed to the script
+
+| Short | Long             | Type | Description |
+|-------|------------------|------|-------------|
+| -s    | --sort           | int  | Sort by hot (1), new (2), rising (3), random rising (4), controversion (5) or top (6) |
+| -l    | --limit          | int  | How many posts to grab |
+| -t    | --threshold      | int  | Only posts with score above threshold |
+| -f    | --fresh          |      | Only add tracks with the \[FRESH\] tag |
+| -ia   | --include-albums |      | Include tracks from albums |
+| -v    | --verbose        |      | Output songs being added and other info |
+
 ### Running the script using cron
 
 We can use cron to automatically run the script periodically in order to keep it up-to-date. You will need either a macOS computer or Linux server to use cron.
