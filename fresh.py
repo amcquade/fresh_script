@@ -74,9 +74,12 @@ def main():
     argparser.add_argument("-t", "--threshold", help="only post with score above threshold", type=int)
     argparser.add_argument("-ia", "--include-albums", help="include tracks from albums", action="store_true")
     argparser.add_argument("-v", "--verbose", help="output songs being added and other info", action="store_true")
-    args = argparser.parse_args()
+    argparser.add_argument("-f", "--fresh", help="only add tracks with the [FRESH] tag", action="store_true")
 
+    args = argparser.parse_args()
+    
     verbose = True if args.verbose else False
+    fresh = args.fresh
     l = args.limit if args.limit else False
     choice = args.sort if args.sort else None
     threshold = args.threshold if args.threshold else None
@@ -93,7 +96,7 @@ def main():
 
     if verbose:
         print('Welcome to the HipHopHeads Fresh Script')
-
+    
     if not choice:
         inputPrompt = textwrap.dedent("""\
         Enter the number of your desired sorting method:
@@ -106,8 +109,15 @@ def main():
         """)
         choice = int(input(inputPrompt))
 
-    if not l:
+    if not l:    
         l = int(input('enter post limit: '))
+
+    if not fresh:
+        fresh_input = input('Would you like to only add tracks tagged as [FRESH]? (y/n)')
+        if fresh_input.lower().strip() == "y":
+            fresh = True
+        else:
+            fresh = False        
 
     if choice is 1:
         sub_choice = subreddit.hot(limit=l)
@@ -136,11 +146,15 @@ def main():
                     print("URL: ", sub.url)
                     print("Score: ", sub.score)
                     print("------------------------\n")
-
+		
                 # Discard post below threshold if given
                 if threshold and sub.score < threshold:
                     continue
 
+                # If fresh flag given, discard post if not tagged [FRESH]
+                if fresh and "[FRESH]" not in sub.title:
+                    continue
+                    
                 # handle possible query string in url
                 url = sub.url.split('?')
                 formattedUrl = url[0] if url != None else sub.url
@@ -167,7 +181,6 @@ def main():
                 print("an error has occured removing or adding new tracks")
         if verbose:
             print(tracks)
-
             print(results)
 if __name__ == '__main__':
     main()
