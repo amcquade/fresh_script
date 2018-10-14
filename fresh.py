@@ -291,8 +291,13 @@ def main():
     if tracks != []:
         try:
             for playlist in user.playlist.split(','):
+                # retrive information of the tracks in user's playlist
+                existing_tracks = spotifyObj.user_playlist_tracks(user.username, playlist)
                 spotifyObj.user_playlist_remove_all_occurrences_of_tracks(user.username, playlist, tracks)
                 results = spotifyObj.user_playlist_add_tracks(user.username, playlist, tracks)
+                if verbose: 
+                    print('New Tracks added to ', spotifyObj.user_playlist(user.username, playlist, 'name')['name'], ': ', abs(existing_tracks['total'] - spotifyObj.user_playlist_tracks(user.username, playlist)['total']))
+                    print()
         except:
             if results == [] and verbose:
                 print("no new tracks have been added.")
@@ -300,6 +305,6 @@ def main():
                 print("an error has occured removing or adding new tracks")
         if verbose:
             print(tracks)
-            print(results)
+            
 if __name__ == '__main__':
     main()
