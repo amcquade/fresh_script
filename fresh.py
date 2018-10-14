@@ -4,7 +4,8 @@ import sys, os, json, webbrowser, textwrap
 import spotipy
 from configparser import ConfigParser
 import argparse
-
+from constants import pun_dict
+from constants import ft_set
 from models import User
 
 # convert a string to a bool
@@ -16,7 +17,6 @@ def str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
-
 def createUser():
     # read config file
     try:
@@ -24,7 +24,11 @@ def createUser():
             client_id = input('Enter your Client ID: ').strip()
             client_secret = input('Enter your Client Secret: ').strip()
             username = input('Enter your Username: ').strip()
-            playlist = input('Enter your Playlist ID: ').strip()
+            enteringPlaylists = True
+            playlists = []
+            while enteringPlaylists:
+                playlists.append(input('Enter your Playlist ID:').strip())
+                enteringPlaylists = str2bool(input('Would you like to enter another playlist ID? ').strip())
             redirect = input('Enter your Redirect URI: ').strip()
 
             config = ConfigParser()
@@ -32,7 +36,7 @@ def createUser():
                 'client_id': client_id,
                 'client_secret': client_secret,
                 'username': username,
-                'playlist_id': playlist,
+                'playlist_id': ','.join(playlists),
                 'redirect_uri': redirect
             }
 
@@ -46,7 +50,7 @@ def createUser():
 
             # spotify info
             username = parser.get('spotify', 'username')
-            playlist = parser.get('spotify', 'playlist_id')
+            playlists = parser.get('spotify', 'playlist_id') #returns a comma separated list of playlists
             client_id = parser.get('spotify', 'client_id')
             client_secret = parser.get('spotify', 'client_secret')
             redirect = parser.get('spotify', 'redirect_uri')
@@ -60,9 +64,9 @@ def createUser():
     except:
         print('config failure')
 
-    return User(username, client_id, client_secret, redirect, playlist)
+    return User(username, client_id, client_secret, redirect, playlists)
 
-
+  
 def filter_tags(title):
     """
     Removes tags from post title and adds them to a set.
@@ -166,7 +170,6 @@ def extract_track_url(search):
                         url = external_urls['spotify']
                         return url
 
-
 def main():
     user = createUser()
 
@@ -175,14 +178,13 @@ def main():
     argparser.add_argument("-l", "--limit", help="how many posts to grab", type=int)
     argparser.add_argument("-t", "--threshold", help="only post with score above threshold", type=int)
     argparser.add_argument("-ia", "--include-albums", help="include tracks from albums", action="store_true")
-    argparser.add_argument("-v", "--verbose", help="output songs being added and other info", action="store_true")ue")
+    argparser.add_argument("-v", "--verbose", help="output songs being added and other info", action="store_true")
     argparser.add_argument("-f", "--fresh", help="only add tracks with the [FRESH] tag", action="store_true")
 
     args = argparser.parse_args()
     
     verbose = True if args.verbose else False
     fresh = args.fresh
-
     l = args.limit if args.limit else False
     choice = args.sort if args.sort else None
     threshold = args.threshold if args.threshold else None
@@ -239,7 +241,6 @@ def main():
         sys.exit()
 
     for sub in sub_choice:
-
         if sub.domain == "open.spotify.com":            
         # check if post is a track or album
             isMatch = re.search('(track|album)', sub.url)
@@ -260,7 +261,7 @@ def main():
                     
                 # handle possible query string in url
                 url = sub.url.split('?')
-				        formattedUrl = url[0] if url != None else sub.url
+                formattedUrl = url[0] if url != None else sub.url
 
                 # handle adding tracks from albums
                 if includeAlbums and isMatch.group(1) == 'album':
@@ -285,19 +286,20 @@ def main():
                         if track_url:
                             tracks.append(track_url)
 
+
     # handle remove duplicates of tracks before adding new tracks
     if tracks != []:
         try:
-            spotifyObj.user_playlist_remove_all_occurrences_of_tracks(user.username, user.playlist, tracks)
-            results = spotifyObj.user_playlist_add_tracks(user.username, user.playlist, tracks)
+            for playlist in user.playlist.split(','):
+                spotifyObj.user_playlist_remove_all_occurrences_of_tracks(user.username, playlist, tracks)
+                results = spotifyObj.user_playlist_add_tracks(user.username, playlist, tracks)
         except:
             if results == [] and verbose:
                 print("no new tracks have been added.")
             else:
-                print("an error has occurred removing or adding new tracks")
+                print("an error has occured removing or adding new tracks")
         if verbose:
             print(tracks)
             print(results)
-
 if __name__ == '__main__':
     main()
