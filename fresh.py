@@ -68,16 +68,19 @@ def main():
     argparser.add_argument("-s", "--sort", help="sort by hot or new", type=int)
     argparser.add_argument("-l", "--limit", help="how many posts to grab", type=int)
     argparser.add_argument("-t", "--threshold", help="only post with score above threshold", type=int)
+    argparser.add_argument("-ia", "--include-albums", help="include tracks from albums", action="store_true")
     argparser.add_argument("-v", "--verbose", help="output songs being added and other info", action="store_true")
     argparser.add_argument("-f", "--fresh", help="only add tracks with the [FRESH] tag", action="store_true")
+
     args = argparser.parse_args()
     
-    verbose = args.verbose
+    verbose = True if args.verbose else False
     fresh = args.fresh
     l = args.limit if args.limit else False
     choice = args.sort if args.sort else None
     threshold = args.threshold if args.threshold else None
-            
+    includeAlbums = True if args.include_albums else False
+
     # connect to reddit bot
     reddit = praw.Reddit('bot1')
     subreddit = reddit.subreddit('hiphopheads')
@@ -110,7 +113,7 @@ def main():
         if fresh_input.lower().strip() == "y":
             fresh = True
         else:
-            fresh = False
+            fresh = False        
 
     if choice is 1:
         sub_choice = subreddit.hot(limit=l)
@@ -132,8 +135,8 @@ def main():
         if sub.domain == "open.spotify.com":
 
             # check if post is a track or album
-            isTrack = re.search('track', sub.url)
-            if isTrack != None:
+            isMatch = re.search('(track|album)', sub.url)
+            if isMatch != None:
                 if verbose:
                     print("Post: ", sub.title)
                     print("URL: ", sub.url)
@@ -147,14 +150,19 @@ def main():
                 # If fresh flag given, discard post if not tagged [FRESH]
                 if fresh and "[FRESH]" not in sub.title:
                     continue
-
+                    
                 # handle possible query string in url
                 url = sub.url.split('?')
-                if url != None:
-                    tracks.append(url[0])
-                else:
-                    tracks.append(sub.url)
+                formattedUrl = url[0] if url != None else sub.url
 
+                # handle adding tracks from albums
+                if includeAlbums and isMatch.group(1) == 'album':
+                    tracksInAlbum = spotifyObj.album_tracks(formattedUrl)
+                    trackIds = [item['external_urls']['spotify'] for item in tracksInAlbum['items']]
+                    tracks.extend(trackIds)
+                # handle adding tracks
+                elif isMatch.group(1) == 'track':
+                    tracks.append(formattedUrl)
 
     # handle remove duplicates of tracks before adding new tracks
     if tracks != []:
