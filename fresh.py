@@ -1,13 +1,11 @@
 import praw
 import re
-import sys, os, json, webbrowser
+import sys, os, json, webbrowser, textwrap
 import spotipy
 from configparser import ConfigParser
 import argparse
-from models import User
-from constants import pun_dict
-from constants import ft_set
 
+from models import User
 
 # convert a string to a bool
 def str2bool(v):
@@ -175,13 +173,21 @@ def main():
     argparser = argparse.ArgumentParser()
     argparser.add_argument("-s", "--sort", help="sort by hot or new", type=int)
     argparser.add_argument("-l", "--limit", help="how many posts to grab", type=int)
-    argparser.add_argument("-v", "--verbose", help="output songs being added and other info", action="store_true")
+    argparser.add_argument("-t", "--threshold", help="only post with score above threshold", type=int)
+    argparser.add_argument("-ia", "--include-albums", help="include tracks from albums", action="store_true")
+    argparser.add_argument("-v", "--verbose", help="output songs being added and other info", action="store_true")ue")
+    argparser.add_argument("-f", "--fresh", help="only add tracks with the [FRESH] tag", action="store_true")
+
     args = argparser.parse_args()
     
     verbose = True if args.verbose else False
+    fresh = args.fresh
+
     l = args.limit if args.limit else False
     choice = args.sort if args.sort else None
-            
+    threshold = args.threshold if args.threshold else None
+    includeAlbums = True if args.include_albums else False
+
     # connect to reddit bot
     reddit = praw.Reddit('bot1')
     subreddit = reddit.subreddit('hiphopheads')
@@ -195,36 +201,75 @@ def main():
         print('Welcome to the HipHopHeads Fresh Script')
     
     if not choice:
-        choice = int(input('Enter 1 to sort by hot, 2 to sort by new: '))
+        inputPrompt = textwrap.dedent("""\
+        Enter the number of your desired sorting method:
+            1 - Hot
+            2 - New
+            3 - Rising
+            4 - Random Rising
+            5 - Controversial
+            6 - Top
+        """)
+        choice = int(input(inputPrompt))
 
     if not l:    
         l = int(input('enter post limit: '))
 
-    if choice == 1:
+    if not fresh:
+        fresh_input = input('Would you like to only add tracks tagged as [FRESH]? (y/n)')
+        if fresh_input.lower().strip() == "y":
+            fresh = True
+        else:
+            fresh = False        
+
+    if choice is 1:
         sub_choice = subreddit.hot(limit=l)
-    elif choice == 2:
+    elif choice is 2:
         sub_choice = subreddit.new(limit=l)
+    elif choice is 3:
+        sub_choice = subreddit.rising(limit=l)
+    elif choice is 4:
+        sub_choice = subreddit.random_rising(limit=l)
+    elif choice is 5:
+        sub_choice = subreddit.controversial(limit = l)
+    elif choice is 6:
+        sub_choice = subreddit.top(limit=l)
     else:
-        print("option not supplied")
+        print ("option not supplied")
         sys.exit()
 
     for sub in sub_choice:
-        if sub.domain == "open.spotify.com":
-            # check if post is a track or album
-            isTrack = re.search('track', sub.url)
-            if isTrack:
+
+        if sub.domain == "open.spotify.com":            
+        # check if post is a track or album
+            isMatch = re.search('(track|album)', sub.url)
+            if isMatch != None:
                 if verbose:
                     print("Post: ", sub.title)
                     print("URL: ", sub.url)
                     print("Score: ", sub.score)
-                    print("------------------------\n")
+                    print("------------------------\n")                 
+		
+                # Discard post below threshold if given
+                if threshold and sub.score < threshold:
+                    continue
 
+                # If fresh flag given, discard post if not tagged [FRESH]
+                if fresh and "[FRESH]" not in sub.title:
+                    continue
+                    
                 # handle possible query string in url
                 url = sub.url.split('?')
-                if url != None:
-                    tracks.append(url[0])
-                else:
-                    tracks.append(sub.url)
+				        formattedUrl = url[0] if url != None else sub.url
+
+                # handle adding tracks from albums
+                if includeAlbums and isMatch.group(1) == 'album':
+                    tracksInAlbum = spotifyObj.album_tracks(formattedUrl)
+                    trackIds = [item['external_urls']['spotify'] for item in tracksInAlbum['items']]
+                    tracks.extend(trackIds)
+                # handle adding tracks
+                elif isMatch.group(1) == 'track':
+                    tracks.append(formattedUrl)
         else:
             # handle non-spotify posts
             title, tags = filter_tags(sub.title)
@@ -253,7 +298,6 @@ def main():
         if verbose:
             print(tracks)
             print(results)
-
 
 if __name__ == '__main__':
     main()
