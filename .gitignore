@@ -1,3 +1,5 @@
 .cache*
 .config.ini
-*.ini
+praw.ini
+__pycache__
+*.ini`
