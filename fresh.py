@@ -22,7 +22,11 @@ def createUser():
             client_id = input('Enter your Client ID: ').strip()
             client_secret = input('Enter your Client Secret: ').strip()
             username = input('Enter your Username: ').strip()
-            playlist = input('Enter your Playlist ID: ').strip()
+            enteringPlaylists = True
+            playlists = []
+            while enteringPlaylists:
+                playlists.append(input('Enter your Playlist ID:').strip())
+                enteringPlaylists = str2bool(input('Would you like to enter another playlist ID? ').strip())
             redirect = input('Enter your Redirect URI: ').strip()
 
             config = ConfigParser()
@@ -30,7 +34,7 @@ def createUser():
                 'client_id': client_id,
                 'client_secret': client_secret,
                 'username': username,
-                'playlist_id': playlist,
+                'playlist_id': ','.join(playlists),
                 'redirect_uri': redirect
             }
 
@@ -44,7 +48,7 @@ def createUser():
 
             # spotify info
             username = parser.get('spotify', 'username')
-            playlist = parser.get('spotify', 'playlist_id')
+            playlists = parser.get('spotify', 'playlist_id') #returns a comma separated list of playlists
             client_id = parser.get('spotify', 'client_id')
             client_secret = parser.get('spotify', 'client_secret')
             redirect = parser.get('spotify', 'redirect_uri')
@@ -58,7 +62,7 @@ def createUser():
     except:
         print('config failure')
 
-    return User(username, client_id, client_secret, redirect, playlist)
+    return User(username, client_id, client_secret, redirect, playlists)
 
 
 def main():
@@ -167,8 +171,9 @@ def main():
     # handle remove duplicates of tracks before adding new tracks
     if tracks != []:
         try:
-            spotifyObj.user_playlist_remove_all_occurrences_of_tracks(user.username, user.playlist, tracks)
-            results = spotifyObj.user_playlist_add_tracks(user.username, user.playlist, tracks)
+            for playlist in user.playlist.split(','):
+                spotifyObj.user_playlist_remove_all_occurrences_of_tracks(user.username, playlist, tracks)
+                results = spotifyObj.user_playlist_add_tracks(user.username, playlist, tracks)
         except:
             if results == [] and verbose:
                 print("no new tracks have been added.")
@@ -176,7 +181,6 @@ def main():
                 print("an error has occured removing or adding new tracks")
         if verbose:
             print(tracks)
-            
             print(results)
 if __name__ == '__main__':
     main()
