@@ -4,6 +4,8 @@ import sys, os, json, webbrowser, textwrap
 import spotipy
 from configparser import ConfigParser
 import argparse
+from constants import pun_dict
+from constants import ft_set
 from models import User
 
 # convert a string to a bool
@@ -64,6 +66,109 @@ def createUser():
 
     return User(username, client_id, client_secret, redirect, playlists)
 
+  
+def filter_tags(title):
+    """
+    Removes tags from post title and adds them to a set.
+
+    Any tags such as [FRESH], (feat. J-Bobby), etc. will be removed from the title
+    and placed in a set (without surrounding punctuation). Titles are also lower-cased
+    and any dashes/extra white space are removed.
+
+    Parameters
+    ----------
+    title : str
+        The non-spotify Reddit post title to be filtered.
+
+    Returns
+    -------
+    filtered_title : str
+        The filtered post title.
+        
+    tags : set
+        Container for any removed tags.
+    """
+
+    tags = set()
+    filtered_title = []
+
+    # separate tags from title
+    # assumes there are no erroneous parentheses/brackets
+    # ex. [FRESH] Lil Pump - Nice 2 Yeet ya [prod. by D4NNY]
+    # there may be issues if song name contains parentheses
+    tag = []
+    last_pun = None
+    add_to_tag = False
+    for character in title:
+        character = character.lower()
+        # beginning of tag
+        if character == '[' or character == '(':
+            if add_to_tag:
+                tag.append(character)
+            else:
+                last_pun = character
+                add_to_tag = True
+        # end of tag
+        elif character == ']' or character == ')':
+            if add_to_tag:
+                if pun_dict[character] == last_pun:
+                    # separate multi-word tags
+                    for add_tag in ''.join(tag).split():
+                        tags.add(add_tag)
+                    tag.clear()
+                    add_to_tag = False
+                else:
+                    tag.append(character)
+        # remove dashes if they occur outside of tags
+        elif character != '-':
+            if add_to_tag:
+                tag.append(character)
+            else:
+                filtered_title.append(character)
+
+    # remove extra spaces from title
+    filtered_title = ''.join(filtered_title).split()
+
+    # remove feat from end of title (if not in parentheses/brackets, improves Spotify search results)
+    i = 0
+    for i in range(len(filtered_title)):
+        if filtered_title[i] in ft_set:
+            i -= 1
+            break
+    filtered_title = filtered_title[:i+1]
+
+    filtered_title = ' '.join(filtered_title)
+    return filtered_title, tags
+
+
+def extract_track_url(search):
+    """
+    Get the first Spotify track url from a given search.
+
+    Extended description of function.
+
+    Parameters
+    ----------
+    search : dict
+        Contains information relating to Spotify API track search request.
+
+    Returns
+    -------
+    url : str
+        Spotify URL for the first track received from search query.
+    """
+
+    if 'tracks' in search:
+        tracks = search['tracks']
+        if 'items' in tracks:
+            items = tracks['items']
+            # take the first url we can find
+            for item in items:
+                if 'external_urls' in item:
+                    external_urls = item['external_urls']
+                    if 'spotify' in external_urls:
+                        url = external_urls['spotify']
+                        return url
 
 def main():
     user = createUser()
@@ -136,16 +241,15 @@ def main():
         sys.exit()
 
     for sub in sub_choice:
-        if sub.domain == "open.spotify.com":
-
-            # check if post is a track or album
+        if sub.domain == "open.spotify.com":            
+        # check if post is a track or album
             isMatch = re.search('(track|album)', sub.url)
             if isMatch != None:
                 if verbose:
                     print("Post: ", sub.title)
                     print("URL: ", sub.url)
                     print("Score: ", sub.score)
-                    print("------------------------\n")
+                    print("------------------------\n")                 
 		
                 # Discard post below threshold if given
                 if threshold and sub.score < threshold:
@@ -167,6 +271,21 @@ def main():
                 # handle adding tracks
                 elif isMatch.group(1) == 'track':
                     tracks.append(formattedUrl)
+        else:
+            # handle non-spotify posts
+            title, tags = filter_tags(sub.title)
+            if 'discussion' not in tags:
+                if 'album' in tags or 'impressions' in tags:
+                    # there is a pull request for this feature at the moment
+                    # so I will leave it out for now
+                    search = spotifyObj.search(title, type='album')
+                else:
+                    search = spotifyObj.search(title, type='track')
+                    if search:
+                        track_url = extract_track_url(search)
+                        if track_url:
+                            tracks.append(track_url)
+
 
     # handle remove duplicates of tracks before adding new tracks
     if tracks != []:
