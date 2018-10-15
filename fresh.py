@@ -173,7 +173,7 @@ def extract_track_url(search):
 def main():
     user = createUser()
 
-    argparser = argparse.ArgumentParser()
+    argparser = argparse.ArgumentParser(formatter_class=lambda prog: argparse.HelpFormatter(prog,max_help_position=40))
     argparser.add_argument("-s", "--sort", help="sort by hot, new, rising, random_rising, controversial or top", type=str,
                            choices=['hot', 'new', 'rising', 'random_rising', 'controversial', 'top'])
     argparser.add_argument("-l", "--limit", help="how many posts to grab", type=int)
