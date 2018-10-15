@@ -12,11 +12,25 @@ This project uses Python3. You will need to setup a Spotify developer account an
 * your spotify username
 * playlist id of the playlist you want to add the tracks to
 * the url you want to redirect to for authentication, i.e. http://google.com/
- You will also need to setup a reddit instance with praw. [Heres](https://pythonforengineers.com/build-a-reddit-bot-part-1/) a useful guide I used to do this. 
+ You will also need to setup a reddit instance with praw. [Heres](https://pythonforengineers.com/build-a-reddit-bot-part-1/) a useful guide I used to do this.
+ 
+### Installing dependencies
+This project uses a dependency manager called [pipenv](https://pipenv.readthedocs.io). Follow the instructions to install it [here](https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv).
+
+The project dependencies are listed in a [Pipfile](https://github.com/pypa/pipfile). Using pipenv, you can install all the dependencies with the following commands:
+```bash
+cd fresh_script
+pipenv install
+``` 
+
+Pipenv uses [virtualenv](https://virtualenv.pypa.io/en/stable/) to create a python environment with all the dependencies listed in the Pipfile. Before running the fresh.py script, you must first activate the environment:
+```bash
+pipenv shell
 ```
-pip3 install praw
-pip3 install spotipy
-pip3 install configparser
+
+If you wish to deactivate the environment use the command
+```bash
+exit
 ```
 
 ### Running the script
