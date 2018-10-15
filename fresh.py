@@ -174,7 +174,8 @@ def main():
     user = createUser()
 
     argparser = argparse.ArgumentParser(formatter_class=lambda prog: argparse.HelpFormatter(prog,max_help_position=40))
-    argparser.add_argument("-s", "--sort", help="sort by hot or new", type=int)
+    argparser.add_argument("-s", "--sort", help="sort by hot, new, rising, random_rising, controversial or top", type=str,
+                           choices=['hot', 'new', 'rising', 'random_rising', 'controversial', 'top'])
     argparser.add_argument("-l", "--limit", help="how many posts to grab", type=int)
     argparser.add_argument("-t", "--threshold", help="only post with score above threshold", type=int)
     argparser.add_argument("-ia", "--include-albums", help="include tracks from albums", action="store_true")
@@ -204,15 +205,15 @@ def main():
     
     if not choice:
         inputPrompt = textwrap.dedent("""\
-        Enter the number of your desired sorting method:
-            1 - Hot
-            2 - New
-            3 - Rising
-            4 - Random Rising
-            5 - Controversial
-            6 - Top
+        Enter your desired sorting method:
+            hot
+            new
+            rising
+            random_rising
+            controversial
+            top
         """)
-        choice = int(input(inputPrompt))
+        choice = input(inputPrompt)
 
     if not l:    
         l = int(input('enter post limit: '))
@@ -224,20 +225,20 @@ def main():
         else:
             fresh = False        
 
-    if choice is 1:
+    if choice.lower() == 'hot':
         sub_choice = subreddit.hot(limit=l)
-    elif choice is 2:
+    elif choice.lower() == 'new':
         sub_choice = subreddit.new(limit=l)
-    elif choice is 3:
+    elif choice.lower() == 'rising':
         sub_choice = subreddit.rising(limit=l)
-    elif choice is 4:
+    elif choice.lower() == 'random_rising':
         sub_choice = subreddit.random_rising(limit=l)
-    elif choice is 5:
-        sub_choice = subreddit.controversial(limit = l)
-    elif choice is 6:
+    elif choice.lower() == 'controversial':
+        sub_choice = subreddit.controversial(limit=l)
+    elif choice.lower() == 'top':
         sub_choice = subreddit.top(limit=l)
     else:
-        print ("option not supplied")
+        print("Unsupported sorting method")
         sys.exit()
 
     for sub in sub_choice:

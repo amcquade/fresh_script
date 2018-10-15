@@ -47,7 +47,7 @@ The following arguments can be passed to the script
 
 | Short | Long             | Type | Description |
 |-------|------------------|------|-------------|
-| -s    | --sort           | int  | Sort by hot (1), new (2), rising (3), random rising (4), controversion (5) or top (6) |
+| -s    | --sort           | int  | Sort by hot, new, rising, random_rising, controversion or top |
 | -l    | --limit          | int  | How many posts to grab |
 | -t    | --threshold      | int  | Only posts with score above threshold |
 | -f    | --fresh          |      | Only add tracks with the \[FRESH\] tag |
