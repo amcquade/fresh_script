@@ -38,21 +38,21 @@ exit
 Running the program is simple. The first time you run it, you will be asked for your Spotify credientials which will be saved to a config file for ease of use in the future. Choose to sort results by hot or new, enter a post limit, and then enjoy.
 
 ```
-python fresh.py
+python3 fresh.py
 ```
 
 ### Script arguments
 
 The following arguments can be passed to the script
 
-| Short | Long             | Type | Description |
-|-------|------------------|------|-------------|
-| -s    | --sort           | int  | Sort by hot, new, rising, random_rising, controversion or top |
-| -l    | --limit          | int  | How many posts to grab |
-| -t    | --threshold      | int  | Only posts with score above threshold |
-| -f    | --fresh          |      | Only add tracks with the \[FRESH\] tag |
-| -ia   | --include-albums |      | Include tracks from albums |
-| -v    | --verbose        |      | Output songs being added and other info |
+| Short | Long             | Type   | Description |
+|-------|------------------|--------|-------------|
+| -s    | --sort           | string | Sort by hot, new, rising, random_rising, controversion or top |
+| -l    | --limit          | int    | How many posts to grab |
+| -t    | --threshold      | int    | Only posts with score above threshold |
+| -f    | --fresh          | bool   | Only add tracks with the \[FRESH\] tag |
+| -ia   | --include-albums | bool   | Include tracks from albums |
+| -v    | --verbose        | bool   | Output songs being added and other info |
 
 ### Running the script using cron
 
