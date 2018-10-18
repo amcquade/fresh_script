@@ -22,7 +22,7 @@ def addPlaylists(playlists):
     playlistsCopy = playlists[:]
     enteringPlaylists = True
     while enteringPlaylists:
-        playlistsCopy.append(input('Enter your Playlist ID:').strip())
+        playlistsCopy.append(input('Enter your Playlist ID:' ).strip())
         enteringPlaylists = str2bool(input('Would you like to enter another playlist ID? ').strip())
     return playlistsCopy
 
@@ -38,7 +38,7 @@ def removePlaylists(playlists):
             del playlistsCopy[index-1]
         except:
             print("That playlist number doesn't exist!")
-        enteringPlaylists = str2bool(input('Would you like to remove another playlist? ').strip())
+        removingPlaylists = str2bool(input('Would you like to remove another playlist? ').strip())
     return playlistsCopy
 
 # print out numbered list of playlists
@@ -207,11 +207,23 @@ def manage_playlists(playlistStr):
     """
     playlists = playlistStr.split(',')
     printPlaylists(playlists)
+
     if str2bool(input('Would you like to remove a playlist? ').strip()):
         playlists = removePlaylists(playlists)
+    
     if str2bool(input('Would you like to add a playlist? ').strip()):
         playlists = addPlaylists(playlists)
+    
     printPlaylists(playlists)
+    playlistStr = ','.join(playlists)
+    
+    config = ConfigParser()
+    config.read('.config.ini')
+    config['spotify']['playlist_id'] = playlistStr
+    with open('.config.ini', 'w') as f:
+        config.write(f)
+
+    return playlistStr
 
 def main():
     user = createUser()
@@ -249,7 +261,7 @@ def main():
         print('Welcome to the HipHopHeads Fresh Script')
     
     if managePlaylists:
-        manage_playlists(user.playlist)
+        user.playlist = manage_playlists(user.playlist)
 
     if not choice:
         inputPrompt = textwrap.dedent("""\
