@@ -17,6 +17,37 @@ def str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
+# prompt user to add playlists
+def addPlaylists(playlists):
+    playlistsCopy = playlists[:]
+    enteringPlaylists = True
+    while enteringPlaylists:
+        playlistsCopy.append(input('Enter your Playlist ID:').strip())
+        enteringPlaylists = str2bool(input('Would you like to enter another playlist ID? ').strip())
+    return playlistsCopy
+
+# prompt user to remove playlists
+def removePlaylists(playlists):
+    playlistsCopy = playlists[:]
+    removingPlaylists = True
+    while removingPlaylists:
+        printPlaylists(playlistsCopy)
+        index = input('Enter the number of the playlist you would like to remove: ').strip()
+        try:
+            index = int(index)
+            del playlistsCopy[index-1]
+        except:
+            print("That playlist number doesn't exist!")
+        enteringPlaylists = str2bool(input('Would you like to remove another playlist? ').strip())
+    return playlistsCopy
+
+# print out numbered list of playlists
+def printPlaylists(playlists):
+    print("\nYour current playlists are:")
+    for index, playlist in enumerate(playlists):
+        print(f"{index+1}. {playlist}")
+    print()
+
 def createUser():
     # read config file
     try:
@@ -24,11 +55,7 @@ def createUser():
             client_id = input('Enter your Client ID: ').strip()
             client_secret = input('Enter your Client Secret: ').strip()
             username = input('Enter your Username: ').strip()
-            enteringPlaylists = True
-            playlists = []
-            while enteringPlaylists:
-                playlists.append(input('Enter your Playlist ID:').strip())
-                enteringPlaylists = str2bool(input('Would you like to enter another playlist ID? ').strip())
+            playlists = addPlaylists([])
             redirect = input('Enter your Redirect URI: ').strip()
 
             config = ConfigParser()
@@ -170,6 +197,22 @@ def extract_track_url(search):
                         url = external_urls['spotify']
                         return url
 
+def manage_playlists(playlistStr):
+    """
+    List, add, and remove playlists.
+    Parameters
+    ----------
+    playlistStr : string
+        String of user playlists.
+    """
+    playlists = playlistStr.split(',')
+    printPlaylists(playlists)
+    if str2bool(input('Would you like to remove a playlist? ').strip()):
+        playlists = removePlaylists(playlists)
+    if str2bool(input('Would you like to add a playlist? ').strip()):
+        playlists = addPlaylists(playlists)
+    printPlaylists(playlists)
+
 def main():
     user = createUser()
 
@@ -181,6 +224,7 @@ def main():
     argparser.add_argument("-ia", "--include-albums", help="include tracks from albums", action="store_true")
     argparser.add_argument("-v", "--verbose", help="output songs being added and other info", action="store_true")
     argparser.add_argument("-f", "--fresh", help="only add tracks with the [FRESH] tag", action="store_true")
+    argparser.add_argument("-p", "--playlists", help="add or remove playlists", action="store_true")
 
     args = argparser.parse_args()
     
@@ -190,6 +234,7 @@ def main():
     choice = args.sort if args.sort else None
     threshold = args.threshold if args.threshold else None
     includeAlbums = True if args.include_albums else False
+    managePlaylists = True if args.playlists else False
 
     # connect to reddit bot
     reddit = praw.Reddit('bot1')
@@ -203,6 +248,9 @@ def main():
     if verbose:
         print('Welcome to the HipHopHeads Fresh Script')
     
+    if managePlaylists:
+        manage_playlists(user.playlist)
+
     if not choice:
         inputPrompt = textwrap.dedent("""\
         Enter your desired sorting method:
