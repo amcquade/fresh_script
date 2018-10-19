@@ -53,6 +53,7 @@ The following arguments can be passed to the script
 | -f    | --fresh          | bool   | Only add tracks with the \[FRESH\] tag |
 | -ia   | --include-albums | bool   | Include tracks from albums |
 | -v    | --verbose        | bool   | Output songs being added and other info |
+| -p    | --playlists      | bool   | List, add, or remove playlists to add songs to |
 
 ### Running the script using cron
 
