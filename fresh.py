@@ -2,7 +2,7 @@ import praw
 import re
 import sys, os, json, webbrowser, textwrap
 import spotipy
-from configparser import ConfigParser
+from configparser import ConfigParser, RawConfigParser
 import argparse
 from constants import pun_dict
 from constants import ft_set
@@ -21,27 +21,41 @@ def createUser():
     # read config file
     try:
         if not os.path.isfile('.config.ini'):
-            client_id = input('Enter your Client ID: ').strip()
-            client_secret = input('Enter your Client Secret: ').strip()
+            s_client_id = input('Enter your Spotify Client ID: ').strip()
+            s_client_secret = input('Enter your Spotify Client Secret: ').strip()
             username = input('Enter your Username: ').strip()
             enteringPlaylists = True
             playlists = []
             while enteringPlaylists:
                 playlists.append(input('Enter your Playlist ID:').strip())
-                enteringPlaylists = str2bool(input('Would you like to enter another playlist ID? ').strip())
+                enteringPlaylists = str2bool(input('Would you like to enter another playlist ID? [Y/N]').strip())
             redirect = input('Enter your Redirect URI: ').strip()
+            r_client_id = input('Enter your Reddit Client ID: ').strip()
+            r_client_secret = input('Enter your  Reddit Client Secret: ').strip()
 
-            config = ConfigParser()
-            config['spotify'] = {
-                'client_id': client_id,
-                'client_secret': client_secret,
+            s_config = ConfigParser()
+            s_config['spotify'] = {
+                'client_id': s_client_id,
+                'client_secret': s_client_secret,
                 'username': username,
                 'playlist_id': ','.join(playlists),
                 'redirect_uri': redirect
             }
 
+            r_config = ConfigParser()
+
+            r_config['bot1'] = {
+                'client_id': r_client_id,
+                'client_secret': r_client_secret,
+                'user_agent': 'FreshScript'
+
+            }
             with open('.config.ini', 'w') as f:
-                config.write(f)
+                s_config.write(f)
+
+            with open('praw.ini', 'w') as p:
+                r_config.write(p)
+
 
         else:
             # parse config
@@ -51,8 +65,8 @@ def createUser():
             # spotify info
             username = parser.get('spotify', 'username')
             playlists = parser.get('spotify', 'playlist_id') #returns a comma separated list of playlists
-            client_id = parser.get('spotify', 'client_id')
-            client_secret = parser.get('spotify', 'client_secret')
+            s_client_id = parser.get('spotify', 'client_id')
+            s_client_secret = parser.get('spotify', 'client_secret')
             redirect = parser.get('spotify', 'redirect_uri')
 
 
@@ -64,7 +78,8 @@ def createUser():
     except:
         print('config failure')
 
-    return User(username, client_id, client_secret, redirect, playlists)
+    return User(username, s_client_id, s_client_secret, redirect, playlists)
+
 
   
 def filter_tags(title):
