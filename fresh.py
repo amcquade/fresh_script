@@ -52,6 +52,7 @@ def createUser():
     # read config file
     try:
         if not os.path.isfile('.config.ini'):
+            # get credentials 
             s_client_id = input('Enter your Spotify Client ID: ').strip()
             s_client_secret = input('Enter your Spotify Client Secret: ').strip()
             username = input('Enter your Username: ').strip()
@@ -60,6 +61,7 @@ def createUser():
             r_client_id = input('Enter your Reddit Client ID: ').strip()
             r_client_secret = input('Enter your  Reddit Client Secret: ').strip()
 
+            # write spotify config
             s_config = ConfigParser()
             s_config['spotify'] = {
                 'client_id': s_client_id,
@@ -69,8 +71,8 @@ def createUser():
                 'redirect_uri': redirect
             }
 
+            # write praw config
             r_config = ConfigParser()
-
             r_config['bot1'] = {
                 'client_id': r_client_id,
                 'client_secret': r_client_secret,
@@ -238,7 +240,7 @@ def manage_playlists(playlistStr):
     with open('.config.ini', 'w') as f:
         config.write(f)
 
-    return playlistStr
+    return playlistStr      
 
 def main():
     user = createUser()
@@ -270,7 +272,6 @@ def main():
     # create spotipy obj
     spotifyObj = spotipy.Spotify(auth=user.token)
     spotifyObj.trace = False
-    tracks = []
 
     if verbose:
         print('Welcome to the HipHopHeads Fresh Script')
@@ -316,7 +317,9 @@ def main():
         print("Unsupported sorting method")
         sys.exit()
 
-    for sub in sub_choice:
+    tracks = []
+    tracks_array = []
+    for sub in sub_choice: 
         if sub.domain == "open.spotify.com":            
         # check if post is a track or album
             isMatch = re.search('(track|album)', sub.url)
@@ -361,26 +364,34 @@ def main():
                         track_url = extract_track_url(search)
                         if track_url:
                             tracks.append(track_url)
+        # handle overflow 
+        if len(tracks) > 90:
+            tracks_array.append(tracks)
+            tracks = []                
 
+    if len(tracks) > 1:
+        tracks_array.append(tracks)
 
-    # handle remove duplicates of tracks before adding new tracks
-    if tracks != []:
+    # handle remove duplicates of tracks before adding new tracks        
+    if tracks != [] or tracks_array != [] :
         try:
-            for playlist in user.playlist.split(','):
-                # retrive information of the tracks in user's playlist
-                existing_tracks = spotifyObj.user_playlist_tracks(user.username, playlist)
-                spotifyObj.user_playlist_remove_all_occurrences_of_tracks(user.username, playlist, tracks)
-                results = spotifyObj.user_playlist_add_tracks(user.username, playlist, tracks)
-                if verbose: 
-                    print('New Tracks added to ', spotifyObj.user_playlist(user.username, playlist, 'name')['name'], ': ', abs(existing_tracks['total'] - spotifyObj.user_playlist_tracks(user.username, playlist)['total']))
-                    print()
+            if len(tracks_array) > 1:
+                for tr in tracks_array:
+                    for playlist in user.playlist.split(','):
+                        # retrive information of the tracks in user's playlist
+                        existing_tracks = spotifyObj.user_playlist_tracks(user.username, playlist)
+                        spotifyObj.user_playlist_remove_all_occurrences_of_tracks(user.username, playlist, tr)
+                        results = spotifyObj.user_playlist_add_tracks(user.username, playlist, tr)
+                        if verbose: 
+                            print('New Tracks added to ', spotifyObj.user_playlist(user.username, playlist, 'name')['name'], ': ', abs(existing_tracks['total'] - spotifyObj.user_playlist_tracks(user.username, playlist)['total']))
+                            print()
         except:
             if results == [] and verbose:
                 print("no new tracks have been added.")
             else:
                 print("an error has occured removing or adding new tracks")
-        if verbose:
-            print(tracks)
+        # if verbose:
+        #     print(tracks)
             
 if __name__ == '__main__':
     main()
