@@ -38,16 +38,29 @@ class User:
     def addPlaylists(self):
         sp = spotipy.Spotify(auth=self.token)
         spotifyPlaylists = sp.current_user_playlists()
-        for playlist in spotifyPlaylists['items']:
-            #if playlist['owner']['id'] == self.username:
+        userId = sp.current_user()['id']
+        ownedPlaylists = list(filter(lambda x: x['owner']['id'] == userId, spotifyPlaylists['items']))
+        for i, playlist in enumerate(ownedPlaylists):
             print()
-            print(playlist['owner']['id'])
-            print(playlist['name'])
+            print(f"{i+1}. {playlist['name']}")
             print('  total tracks', playlist['tracks']['total'])
+        print()
         enteringPlaylists = True
+        playlistsToAdd = []
+        playlistsToAddIndices = []
         while enteringPlaylists:
-            self.playlists.append(input('Enter your Playlist ID: ' ).strip())
+            index = input('Enter the number of the playlist you would like to add: ').strip()
+            try:
+                index = int(index)
+                if index < 1 or index > len(ownedPlaylists):
+                    raise Exception('Input index out of bounds!')
+                if index not in playlistsToAddIndices:
+                    playlistsToAdd.append(ownedPlaylists[index-1]['id'])
+                    playlistsToAddIndices.append(index)
+            except:
+                print("That playlist number doesn't exist!")
             enteringPlaylists = self.str2bool(input('Would you like to enter another playlist ID? [Y/N] ').strip())
+        self.playlists.extend(playlistsToAdd)
 
     # prompt user to remove playlists
     def removePlaylists(self):
@@ -60,7 +73,7 @@ class User:
                 del self.playlists[index-1]
             except:
                 print("That playlist number doesn't exist!")
-            removingPlaylists = self.str2bool(input('Would you like to remove another playlist? ').strip())
+            removingPlaylists = self.str2bool(input('Would you like to remove another playlist? [Y/N] ').strip())
 
     # print out numbered list of playlists
     def printPlaylists(self):

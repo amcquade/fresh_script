@@ -20,62 +20,62 @@ def str2bool(v):
 def createUser():
     user = None
     # read config file
-    # try:
-    if not os.path.isfile('.config.ini'):
-        # get credentials 
-        s_client_id = input('Enter your Spotify Client ID: ').strip()
-        s_client_secret = input('Enter your Spotify Client Secret: ').strip()
-        username = input('Enter your Username: ').strip()
-        redirect = input('Enter your Redirect URI: ').strip()
-        r_client_id = input('Enter your Reddit Client ID: ').strip()
-        r_client_secret = input('Enter your Reddit Client Secret: ').strip()
-        user = User(username, s_client_id, s_client_secret, redirect, [])
-        user.addPlaylists()
+    try:
+        if not os.path.isfile('.config.ini'):
+            # get credentials 
+            s_client_id = input('Enter your Spotify Client ID: ').strip()
+            s_client_secret = input('Enter your Spotify Client Secret: ').strip()
+            username = input('Enter your Username: ').strip()
+            redirect = input('Enter your Redirect URI: ').strip()
+            r_client_id = input('Enter your Reddit Client ID: ').strip()
+            r_client_secret = input('Enter your Reddit Client Secret: ').strip()
+            user = User(username, s_client_id, s_client_secret, redirect, [])
+            user.addPlaylists()
 
-        # write spotify config
-        s_config = ConfigParser()
-        s_config['spotify'] = {
-            'client_id': s_client_id,
-            'client_secret': s_client_secret,
-            'username': username,
-            'playlist_id': user.getPlaylistsAsString(),
-            'redirect_uri': redirect
-        }
+            # write spotify config
+            s_config = ConfigParser()
+            s_config['spotify'] = {
+                'client_id': s_client_id,
+                'client_secret': s_client_secret,
+                'username': username,
+                'playlist_id': user.getPlaylistsAsString(),
+                'redirect_uri': redirect
+            }
 
-        # write praw config
-        r_config = ConfigParser()
-        r_config['bot1'] = {
-            'client_id': r_client_id,
-            'client_secret': r_client_secret,
-            'user_agent': 'FreshScript'
+            # write praw config
+            r_config = ConfigParser()
+            r_config['bot1'] = {
+                'client_id': r_client_id,
+                'client_secret': r_client_secret,
+                'user_agent': 'FreshScript'
 
-        }
-        with open('.config.ini', 'w') as f:
-            s_config.write(f)
+            }
+            with open('.config.ini', 'w') as f:
+                s_config.write(f)
 
-        with open('praw.ini', 'w') as p:
-            r_config.write(p)
+            with open('praw.ini', 'w') as p:
+                r_config.write(p)
 
-    else:
-        # parse config
-        parser = ConfigParser()
-        parser.read('.config.ini')
+        else:
+            # parse config
+            parser = ConfigParser()
+            parser.read('.config.ini')
 
-        # spotify info
-        username = parser.get('spotify', 'username')
-        playlists = parser.get('spotify', 'playlist_id').split(',')
-        s_client_id = parser.get('spotify', 'client_id')
-        s_client_secret = parser.get('spotify', 'client_secret')
-        redirect = parser.get('spotify', 'redirect_uri')
-        user = User(username, s_client_id, s_client_secret, redirect, playlists)
+            # spotify info
+            username = parser.get('spotify', 'username')
+            playlists = parser.get('spotify', 'playlist_id').split(',')
+            s_client_id = parser.get('spotify', 'client_id')
+            s_client_secret = parser.get('spotify', 'client_secret')
+            redirect = parser.get('spotify', 'redirect_uri')
+            user = User(username, s_client_id, s_client_secret, redirect, playlists)
 
-        '''
-        TODO
-        config['youtube'] = {}
-        config['soundcloud'] = {}
-        '''
-    # except Exception as e:
-    #     print(f'config failure: {e}')
+            '''
+            TODO
+            config['youtube'] = {}
+            config['soundcloud'] = {}
+            '''
+    except Exception as e:
+        print(f'config failure: {e}')
 
     return user
 
@@ -194,10 +194,10 @@ def manage_playlists(user):
     """
     user.printPlaylists()
 
-    if str2bool(input('Would you like to remove a playlist? ').strip()):
+    if str2bool(input('Would you like to remove a playlist? [Y/N] ').strip()):
         user.removePlaylists()
     
-    if str2bool(input('Would you like to add a playlist? ').strip()):
+    if str2bool(input('Would you like to add a playlist? [Y/N] ').strip()):
         user.addPlaylists()
     
     user.printPlaylists()
