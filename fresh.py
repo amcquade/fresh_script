@@ -336,13 +336,13 @@ def main():
             tracks_array.append(tracks)
             tracks = []                
 
-    if len(tracks) > 1:
+    if len(tracks) > 0:
         tracks_array.append(tracks)
 
     # handle remove duplicates of tracks before adding new tracks        
     if tracks != [] or tracks_array != [] :
         try:
-            if len(tracks_array) > 1:
+            if len(tracks_array) >= 1:
                 for tr in tracks_array:
                     for playlist in user.playlists:
                         # retrive information of the tracks in user's playlist

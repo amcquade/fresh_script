@@ -62,11 +62,11 @@ class User:
             enteringPlaylists = self.str2bool(input('Would you like to enter another playlist ID? [Y/N] ').strip())
         self.playlists.extend(playlistsToAdd)
 
-    # prompt user to remove playlists
+    # prompt user to remove current playlists
     def removePlaylists(self):
         removingPlaylists = True
         while removingPlaylists:
-            self.printPlaylists(playlistsCopy)
+            self.printPlaylists()
             index = input('Enter the number of the playlist you would like to remove: ').strip()
             try:
                 index = int(index)
@@ -75,9 +75,10 @@ class User:
                 print("That playlist number doesn't exist!")
             removingPlaylists = self.str2bool(input('Would you like to remove another playlist? [Y/N] ').strip())
 
-    # print out numbered list of playlists
+    # print out numbered list of the names of the playlists that are currently being added to
     def printPlaylists(self):
+        sp = spotipy.Spotify(auth=self.token)
         print("\nYour current playlists are:")
         for index, playlist in enumerate(self.playlists):
-            print(f"{index+1}. {playlist}")
+            print(f"{index+1}. {sp.user_playlist(self.username, playlist, 'name')['name']}")
         print()
