@@ -76,6 +76,16 @@ We can use cron to automatically run the script periodically in order to keep it
     ```
     0 9 * * * python /home/jsmith/fresh.py
     ```
+    This script runs every Friday at 02:00am.
+    ```
+    0 2 * * 5 python /home/jsmith/fresh.py
+    ```
+    This command runs the script on Monday in August at 00:00am.
+    ```
+    0 0 * 8 1 python /home/jsmith/fresh.py
+    ```
+    For help configuring cron use, [Crontab guru](https://crontab.guru)
+
 
 ## Contributing
 
