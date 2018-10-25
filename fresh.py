@@ -233,6 +233,8 @@ def main():
 
     if verbose:
         print('Welcome to the HipHopHeads Fresh Script')
+
+    user.setupCron()    
     
     if managePlaylists:
         manage_playlists(user)
