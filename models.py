@@ -24,8 +24,7 @@ class User:
     def getPlaylistsAsString(self):
         return ','.join(self.playlists)
 
-    # this is just a copy of the function from the other file. 
-    # it probably should be pulled out into a utility class
+    # convert a string to a bool
     def str2bool(self, v):
         if v.lower() in ('yes', 'true', 't', 'y', '1'):
             return True

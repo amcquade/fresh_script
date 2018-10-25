@@ -8,15 +8,6 @@ from constants import pun_dict
 from constants import ft_set
 from models import User
 
-# convert a string to a bool
-def str2bool(v):
-    if v.lower() in ('yes', 'true', 't', 'y', '1'):
-        return True
-    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
-        return False
-    else:
-        raise argparse.ArgumentTypeError('Boolean value expected.')
-
 def createUser():
     user = None
     # read config file
@@ -194,10 +185,10 @@ def manage_playlists(user):
     """
     user.printPlaylists()
 
-    if str2bool(input('Would you like to remove a playlist? [Y/N] ').strip()):
+    if user.str2bool(input('Would you like to remove a playlist? [Y/N] ').strip()):
         user.removePlaylists()
     
-    if str2bool(input('Would you like to add a playlist? [Y/N] ').strip()):
+    if user.str2bool(input('Would you like to add a playlist? [Y/N] ').strip()):
         user.addPlaylists()
     
     user.printPlaylists()
