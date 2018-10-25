@@ -17,38 +17,8 @@ def str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
-# prompt user to add playlists
-def addPlaylists(playlists):
-    playlistsCopy = playlists[:]
-    enteringPlaylists = True
-    while enteringPlaylists:
-        playlistsCopy.append(input('Enter your Playlist ID:' ).strip())
-        enteringPlaylists = str2bool(input('Would you like to enter another playlist ID? [Y/N] ').strip())
-    return playlistsCopy
-
-# prompt user to remove playlists
-def removePlaylists(playlists):
-    playlistsCopy = playlists[:]
-    removingPlaylists = True
-    while removingPlaylists:
-        printPlaylists(playlistsCopy)
-        index = input('Enter the number of the playlist you would like to remove: ').strip()
-        try:
-            index = int(index)
-            del playlistsCopy[index-1]
-        except:
-            print("That playlist number doesn't exist!")
-        removingPlaylists = str2bool(input('Would you like to remove another playlist? ').strip())
-    return playlistsCopy
-
-# print out numbered list of playlists
-def printPlaylists(playlists):
-    print("\nYour current playlists are:")
-    for index, playlist in enumerate(playlists):
-        print(f"{index+1}. {playlist}")
-    print()
-
 def createUser():
+    user = None
     # read config file
     try:
         if not os.path.isfile('.config.ini'):
@@ -56,10 +26,11 @@ def createUser():
             s_client_id = input('Enter your Spotify Client ID: ').strip()
             s_client_secret = input('Enter your Spotify Client Secret: ').strip()
             username = input('Enter your Username: ').strip()
-            playlists = addPlaylists([])
             redirect = input('Enter your Redirect URI: ').strip()
             r_client_id = input('Enter your Reddit Client ID: ').strip()
-            r_client_secret = input('Enter your  Reddit Client Secret: ').strip()
+            r_client_secret = input('Enter your Reddit Client Secret: ').strip()
+            user = User(username, s_client_id, s_client_secret, redirect, [])
+            user.addPlaylists()
 
             # write spotify config
             s_config = ConfigParser()
@@ -67,7 +38,7 @@ def createUser():
                 'client_id': s_client_id,
                 'client_secret': s_client_secret,
                 'username': username,
-                'playlist_id': ','.join(playlists),
+                'playlist_id': user.getPlaylistsAsString(),
                 'redirect_uri': redirect
             }
 
@@ -85,7 +56,6 @@ def createUser():
             with open('praw.ini', 'w') as p:
                 r_config.write(p)
 
-
         else:
             # parse config
             parser = ConfigParser()
@@ -93,21 +63,21 @@ def createUser():
 
             # spotify info
             username = parser.get('spotify', 'username')
-            playlists = parser.get('spotify', 'playlist_id') #returns a comma separated list of playlists
+            playlists = parser.get('spotify', 'playlist_id').split(',')
             s_client_id = parser.get('spotify', 'client_id')
             s_client_secret = parser.get('spotify', 'client_secret')
             redirect = parser.get('spotify', 'redirect_uri')
+            user = User(username, s_client_id, s_client_secret, redirect, playlists)
 
+            '''
+            TODO
+            config['youtube'] = {}
+            config['soundcloud'] = {}
+            '''
+    except Exception as e:
+        print(f'config failure: {e}')
 
-        '''
-        TODO
-        config['youtube'] = {}
-        config['soundcloud'] = {}
-        '''
-    except:
-        print('config failure')
-
-    return User(username, s_client_id, s_client_secret, redirect, playlists)
+    return user
 
 
   
@@ -214,33 +184,30 @@ def extract_track_url(search):
                         url = external_urls['spotify']
                         return url
 
-def manage_playlists(playlistStr):
+def manage_playlists(user):
     """
     List, add, and remove playlists.
     Parameters
     ----------
-    playlistStr : string
-        String of user playlists.
+    user : user object
+        Object containing all user data.
     """
-    playlists = playlistStr.split(',')
-    printPlaylists(playlists)
+    user.printPlaylists()
 
-    if str2bool(input('Would you like to remove a playlist? ').strip()):
-        playlists = removePlaylists(playlists)
+    if str2bool(input('Would you like to remove a playlist? [Y/N] ').strip()):
+        user.removePlaylists()
     
-    if str2bool(input('Would you like to add a playlist? ').strip()):
-        playlists = addPlaylists(playlists)
+    if str2bool(input('Would you like to add a playlist? [Y/N] ').strip()):
+        user.addPlaylists()
     
-    printPlaylists(playlists)
-    playlistStr = ','.join(playlists)
+    user.printPlaylists()
+    playlistStr = user.getPlaylistsAsString()
     
     config = ConfigParser()
     config.read('.config.ini')
     config['spotify']['playlist_id'] = playlistStr
     with open('.config.ini', 'w') as f:
-        config.write(f)
-
-    return playlistStr      
+        config.write(f)      
 
 def main():
     user = createUser()
@@ -277,7 +244,7 @@ def main():
         print('Welcome to the HipHopHeads Fresh Script')
     
     if managePlaylists:
-        user.playlist = manage_playlists(user.playlist)
+        manage_playlists(user)
 
     if not choice:
         inputPrompt = textwrap.dedent("""\
@@ -369,15 +336,15 @@ def main():
             tracks_array.append(tracks)
             tracks = []                
 
-    if len(tracks) > 1:
+    if len(tracks) > 0:
         tracks_array.append(tracks)
 
     # handle remove duplicates of tracks before adding new tracks        
     if tracks != [] or tracks_array != [] :
         try:
-            if len(tracks_array) > 1:
+            if len(tracks_array) >= 1:
                 for tr in tracks_array:
-                    for playlist in user.playlist.split(','):
+                    for playlist in user.playlists:
                         # retrive information of the tracks in user's playlist
                         existing_tracks = spotifyObj.user_playlist_tracks(user.username, playlist)
                         spotifyObj.user_playlist_remove_all_occurrences_of_tracks(user.username, playlist, tr)
