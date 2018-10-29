@@ -35,31 +35,76 @@ class User:
 
     # prompt user to add playlists
     def addPlaylists(self):
-        sp = spotipy.Spotify(auth=self.token)
-        spotifyPlaylists = sp.current_user_playlists()
-        userId = sp.current_user()['id']
-        ownedPlaylists = list(filter(lambda x: x['owner']['id'] == userId, spotifyPlaylists['items']))
-        for i, playlist in enumerate(ownedPlaylists):
-            print()
-            print(f"{i+1}. {playlist['name']}")
-            print('  total tracks', playlist['tracks']['total'])
-        print()
+        offset = 0
+        try:
+            ownedPlaylists = self.fetchPlaylists(offset)
+        except: 
+            print("You don't have any Spotify playlists!")
+            return
+        self.printOwnedPlaylists(ownedPlaylists)
         enteringPlaylists = True
         playlistsToAdd = []
         playlistsToAddIndices = []
         while enteringPlaylists:
-            index = input('Enter the number of the playlist you would like to add: ').strip()
+            print()
+            userInput = input('Enter the number of the playlist you would like to add, or [N/B] to fetch more/previous playlists: ').strip()
             try:
-                index = int(index)
+                index = int(userInput)
                 if index < 1 or index > len(ownedPlaylists):
                     raise Exception('Input index out of bounds!')
                 if index not in playlistsToAddIndices:
                     playlistsToAdd.append(ownedPlaylists[index-1]['id'])
                     playlistsToAddIndices.append(index)
+            except ValueError:
+                if userInput.lower() in ('next', 'n', 'more', 'm'):
+                    offset = offset + 50
+                    try:
+                        ownedPlaylists = self.fetchPlaylists(offset)
+                    except: 
+                        print()
+                        print("No more playlists to view.")
+                        offset = offset - 50
+                    finally: 
+                        self.printOwnedPlaylists(ownedPlaylists)
+                elif userInput.lower() in ('back', 'b', 'previous', 'prev', 'p'):
+                    offset = offset - 50
+                    try:
+                        ownedPlaylists = self.fetchPlaylists(offset)
+                    except:
+                        print()
+                        print("No previous playlists to view.")
+                        offset = offset + 50
+                    finally:
+                        self.printOwnedPlaylists(ownedPlaylists)
+                else:
+                    print()
+                    print("Unexpected input!")
+                continue
             except:
                 print("That playlist number doesn't exist!")
             enteringPlaylists = self.str2bool(input('Would you like to enter another playlist ID? [Y/N] ').strip())
         self.playlists.extend(playlistsToAdd)
+    
+    # fetch playlists given the provided offset
+    def fetchPlaylists(self, offset):
+        sp = spotipy.Spotify(auth=self.token)
+        spotifyPlaylists = sp.current_user_playlists(50, offset)
+        if len(spotifyPlaylists['items']) == 0:
+            raise Exception('No more playlists to fetch!')
+        userId = sp.current_user()['id']
+        ownedPlaylists = list(filter(lambda x: x['owner']['id'] == userId and x['id'] not in self.playlists, spotifyPlaylists['items']))
+        return ownedPlaylists
+    
+    # prints the Spotify playlists that are owned by the user
+    def printOwnedPlaylists(self, ownedPlaylists):
+        if len(ownedPlaylists) == 0:
+            print()
+            print("You do not own any playlists in this batch. Type 'n' or 'next' to go to the next one.")
+        else:
+            for i, playlist in enumerate(ownedPlaylists):
+                print()
+                print(f"{i+1}. {playlist['name']}")
+                print('  total tracks', playlist['tracks']['total'])
 
     # prompt user to remove current playlists
     def removePlaylists(self):
