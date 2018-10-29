@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %} Playlists {% endblock %}
+{% block head %}
+ {{ super() }}
+{% endblock %}
+{% block body %}
+  {% if Name %}
+  <p>Hello {{Name}}!</p>
+  <br>
+    {% for t, l in Track_info %}
+    <li>{{ t }} <a href="{{ l }}">{{ l }}</a></li>
+    {% endfor %}
+  {% else %}
+  <p>Hello friend! You are lost! Click <a href="/">here</a> to return home.</p>
+  {% endif %}
+{% endblock %}

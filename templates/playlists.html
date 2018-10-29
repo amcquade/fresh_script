@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %} Playlists {% endblock %}
+{% block head %}
+ {{ super() }}
+{% endblock %}
+{% block body %}
+  {% if Name %}
+  <p>Hello {{Name}}!</p>
+  <br>
+  <ul>
+    {% for p in Playlists %}
+    <li>{{ p }}</li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>Hello friend! You are lost! Click <a href="/">here</a> to return home.</p>
+  {% endif %}
+{% endblock %}

@@ -17,7 +17,7 @@ subreddit = reddit.subreddit('hiphopheads')
 
 @App.route('/')
 def hello_world(Name=None):
-  return render_template('index.html')
+  return render_template('index.html', Name=User.username)
 
 
 @App.route('/tracks')
