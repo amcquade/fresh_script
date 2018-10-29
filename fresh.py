@@ -200,6 +200,18 @@ def manage_playlists(user):
     with open('.config.ini', 'w') as f:
         config.write(f)      
 
+def process_args(args):
+    processed_args = (
+        True if args.verbose else False, 
+        args.fresh,
+        args.limit if args.limit else False, 
+        args.sort if args.sort else None,
+        args.threshold if args.threshold else None,
+        True if args.include_albums else False,
+        True if args.playlists else False
+        )
+    return processed_args
+
 def main():
     user = createUser()
 
@@ -214,14 +226,7 @@ def main():
     argparser.add_argument("-p", "--playlists", help="add or remove playlists", action="store_true")
 
     args = argparser.parse_args()
-    
-    verbose = True if args.verbose else False
-    fresh = args.fresh
-    l = args.limit if args.limit else False
-    choice = args.sort if args.sort else None
-    threshold = args.threshold if args.threshold else None
-    includeAlbums = True if args.include_albums else False
-    managePlaylists = True if args.playlists else False
+    verbose, fresh, l, choice, threshold, includeAlbums, managePlaylists = process_args(args)
 
     # connect to reddit bot
     reddit = praw.Reddit('bot1')
