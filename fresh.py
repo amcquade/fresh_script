@@ -201,7 +201,7 @@ def manage_playlists(user):
         user.addPlaylists()
 
     user.printPlaylists()
-    # playlistStr = user.getPlaylistsAsString()
+    playlistStr = user.getPlaylistsAsString()
 
     config = ConfigParser()
     config.read('.config.ini')
@@ -217,16 +217,12 @@ def process_args(args, u):
         args.sort if args.sort else process_choice_input(),
         args.threshold if args.threshold else None,
         True if args.include_albums else False,
-        args.fresh if args.fresh else process_fresh(),
-        manage_playlists(u) if args.playlists else False
+        args.fresh if args.fresh else process_fresh()
     )
-    print(processed_args)
-    # manage_playlists(u) if args.playlists else None
+    manage_playlists(u) if args.playlists else False
     return processed_args
 
 # process choice selection
-
-
 def process_choice_input():
     inputPrompt = textwrap.dedent("""\
         Enter your desired sorting method:
@@ -334,7 +330,7 @@ def main():
     spotifyObj.trace = False
     if args.verbose:
         print('Welcome to the HipHopHeads Fresh Script')
-    verbose, l, choice, threshold, includeAlbums, fresh, mp = process_args(
+    verbose, l, choice, threshold, includeAlbums, fresh = process_args(
         args, user)
     sub_choice = process_subreddit(subreddit, choice, l)
 
