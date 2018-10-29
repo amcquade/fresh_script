@@ -1,6 +1,10 @@
 import praw
 import re
-import sys, os, json, webbrowser, textwrap
+import sys
+import os
+import json
+import webbrowser
+import textwrap
 import spotipy
 from configparser import ConfigParser, RawConfigParser
 import argparse
@@ -8,18 +12,21 @@ from constants import pun_dict
 from constants import ft_set
 from models import User
 
+
 def createUser():
     user = None
     # read config file
     try:
         if not os.path.isfile('.config.ini'):
-            # get credentials 
+            # get credentials
             s_client_id = input('Enter your Spotify Client ID: ').strip()
-            s_client_secret = input('Enter your Spotify Client Secret: ').strip()
+            s_client_secret = input(
+                'Enter your Spotify Client Secret: ').strip()
             username = input('Enter your Username: ').strip()
             redirect = input('Enter your Redirect URI: ').strip()
             r_client_id = input('Enter your Reddit Client ID: ').strip()
-            r_client_secret = input('Enter your Reddit Client Secret: ').strip()
+            r_client_secret = input(
+                'Enter your Reddit Client Secret: ').strip()
             user = User(username, s_client_id, s_client_secret, redirect, [])
             user.addPlaylists()
 
@@ -58,7 +65,8 @@ def createUser():
             s_client_id = parser.get('spotify', 'client_id')
             s_client_secret = parser.get('spotify', 'client_secret')
             redirect = parser.get('spotify', 'redirect_uri')
-            user = User(username, s_client_id, s_client_secret, redirect, playlists)
+            user = User(username, s_client_id,
+                        s_client_secret, redirect, playlists)
 
             '''
             TODO
@@ -71,7 +79,6 @@ def createUser():
     return user
 
 
-  
 def filter_tags(title):
     """
     Removes tags from post title and adds them to a set.
@@ -89,7 +96,7 @@ def filter_tags(title):
     -------
     filtered_title : str
         The filtered post title.
-        
+
     tags : set
         Container for any removed tags.
     """
@@ -134,13 +141,14 @@ def filter_tags(title):
     # remove extra spaces from title
     filtered_title = ''.join(filtered_title).split()
 
-    # remove feat from end of title (if not in parentheses/brackets, improves Spotify search results)
+    # remove feat from end of title (if not in parentheses/brackets, improves
+    # Spotify search results)
     i = 0
     for i in range(len(filtered_title)):
         if filtered_title[i] in ft_set:
             i -= 1
             break
-    filtered_title = filtered_title[:i+1]
+    filtered_title = filtered_title[:i + 1]
 
     filtered_title = ' '.join(filtered_title)
     return filtered_title, tags
@@ -175,6 +183,7 @@ def extract_track_url(search):
                         url = external_urls['spotify']
                         return url
 
+
 def manage_playlists(user):
     """
     List, add, and remove playlists.
@@ -187,74 +196,22 @@ def manage_playlists(user):
 
     if user.str2bool(input('Would you like to remove a playlist? [Y/N] ').strip()):
         user.removePlaylists()
-    
+
     if user.str2bool(input('Would you like to add a playlist? [Y/N] ').strip()):
         user.addPlaylists()
-    
+
     user.printPlaylists()
-    playlistStr = user.getPlaylistsAsString()
-    
+    # playlistStr = user.getPlaylistsAsString()
+
     config = ConfigParser()
     config.read('.config.ini')
     config['spotify']['playlist_id'] = playlistStr
     with open('.config.ini', 'w') as f:
-        config.write(f)    
+        config.write(f)
 
-def process_args(args):
-    processed_args = (
-        True if args.verbose else False, 
-        args.fresh,
-        args.limit if args.limit else False, 
-        args.sort if args.sort else None,
-        args.threshold if args.threshold else None,
-        True if args.include_albums else False,
-        True if args.playlists else False
-        )
-    return processed_args
-
-def main():
-    user = createUser()
-
-    argparser = argparse.ArgumentParser(formatter_class=lambda prog: argparse.HelpFormatter(prog,max_help_position=40))
-    argparser.add_argument("-s", "--sort", help="sort by hot, new, rising, random_rising, controversial or top", type=str,
-                           choices=['hot', 'new', 'rising', 'random_rising', 'controversial', 'top'])
-    argparser.add_argument("-l", "--limit", help="how many posts to grab", type=int)
-    argparser.add_argument("-t", "--threshold", help="only post with score above threshold", type=int)
-    argparser.add_argument("-ia", "--include-albums", help="include tracks from albums", action="store_true")
-    argparser.add_argument("-v", "--verbose", help="output songs being added and other info", action="store_true")
-    argparser.add_argument("-f", "--fresh", help="only add tracks with the [FRESH] tag", action="store_true")
-    argparser.add_argument("-p", "--playlists", help="add or remove playlists", action="store_true")
-
-    args = argparser.parse_args()
-    verbose, fresh, l, choice, threshold, includeAlbums, managePlaylists = process_args(args)
-    '''
-    verbose = True if args.verbose else False
-    fresh = args.fresh
-    l = args.limit if args.limit else False
-    choice = args.sort if args.sort else None
-    threshold = args.threshold if args.threshold else None
-    includeAlbums = True if args.include_albums else False
-    managePlaylists = True if args.playlists else False
-    '''
-    # connect to reddit bot
-    reddit = praw.Reddit('bot1')
-    subreddit = reddit.subreddit('hiphopheads')
-
-    # create spotipy obj
-    spotifyObj = spotipy.Spotify(auth=user.token)
-    spotifyObj.trace = False
-
-    if verbose:
-        print('Welcome to the HipHopHeads Fresh Script')
-
-    # TODO:: cron tasks     
-    # user.setupCron()    
-    
-    if managePlaylists:
-        manage_playlists(user)
-
-    if not choice:
-        inputPrompt = textwrap.dedent("""\
+# process choice selection
+def process_choice_input():
+    inputPrompt = textwrap.dedent("""\
         Enter your desired sorting method:
             hot
             new
@@ -263,18 +220,20 @@ def main():
             controversial
             top
         """)
-        choice = input(inputPrompt)
+    return input(inputPrompt)
 
-    if not l:    
-        l = int(input('enter post limit: '))
+# process input for fresh arg
 
-    if not fresh:
-        fresh_input = input('Would you like to only add tracks tagged as [FRESH]? (y/n)')
-        if fresh_input.lower().strip() == "y":
-            fresh = True
-        else:
-            fresh = False                
 
+def process_fresh():
+    fresh_input = input(
+        'Would you like to only add tracks tagged as [FRESH]? (y/n)')
+    if fresh_input.lower().strip() == "y":
+        return True
+    else:
+        return False
+
+def process_subreddit(subreddit, choice, l):
     if choice.lower() == 'hot':
         sub_choice = subreddit.hot(limit=l)
     elif choice.lower() == 'new':
@@ -290,40 +249,83 @@ def main():
     else:
         print("Unsupported sorting method")
         sys.exit()
+    return sub_choice
+
+
+def addSpotifyTrack(fresh, threshold, includeAlbums, verbose, sub, tracks):
+    # check if post is a track or album
+    isMatch = re.search('(track|album)', sub.url)
+    if isMatch != None:
+        if verbose:
+            print("Post: ", sub.title)
+            print("URL: ", sub.url)
+            print("Score: ", sub.score)
+            print("------------------------\n")
+
+        # Discard post below threshold if given
+        if threshold and sub.score < threshold:
+            return
+
+        # If fresh flag given, discard post if not tagged [FRESH]
+        if fresh and "[FRESH]" not in sub.title:
+            return
+
+        # handle possible query string in url
+        url = sub.url.split('?')
+        formattedUrl = url[0] if url != None else sub.url
+
+        # handle adding tracks from albums
+        if includeAlbums and isMatch.group(1) == 'album':
+            tracksInAlbum = spotifyObj.album_tracks(formattedUrl)
+            trackIds = [item['external_urls']['spotify']
+                        for item in tracksInAlbum['items']]
+            tracks.extend(trackIds)
+        # handle adding tracks
+        elif isMatch.group(1) == 'track':
+            tracks.append(formattedUrl)
+
+
+def main():
+    user = createUser()
+
+    argparser = argparse.ArgumentParser(
+        formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=40))
+    argparser.add_argument("-s", "--sort", help="sort by hot, new, rising, random_rising, controversial or top", type=str,
+                           choices=['hot', 'new', 'rising', 'random_rising', 'controversial', 'top'])
+    argparser.add_argument(
+        "-l", "--limit", help="how many posts to grab", type=int)
+    argparser.add_argument(
+        "-t", "--threshold", help="only post with score above threshold", type=int)
+    argparser.add_argument("-ia", "--include-albums",
+                           help="include tracks from albums", action="store_true")
+    argparser.add_argument(
+        "-v", "--verbose", help="output songs being added and other info", action="store_true")
+    argparser.add_argument(
+        "-f", "--fresh", help="only add tracks with the [FRESH] tag", action="store_true")
+    argparser.add_argument("-p", "--playlists",
+                           help="add or remove playlists", action="store_true")
+
+    args = argparser.parse_args()
+
+    # connect to reddit bot
+    reddit = praw.Reddit('bot1')
+    subreddit = reddit.subreddit('hiphopheads')
+
+    # create spotipy obj
+    spotifyObj = spotipy.Spotify(auth=user.token)
+    spotifyObj.trace = False
+    if args.verbose:
+        print('Welcome to the HipHopHeads Fresh Script')
+    verbose, l, choice, threshold, includeAlbums, fresh, mp = process_args(
+        args, user)
+    sub_choice = process_subreddit(subreddit, choice, l)
 
     tracks = []
     tracks_array = []
-    for sub in sub_choice: 
-        if sub.domain == "open.spotify.com":            
-        # check if post is a track or album
-            isMatch = re.search('(track|album)', sub.url)
-            if isMatch != None:
-                if verbose:
-                    print("Post: ", sub.title)
-                    print("URL: ", sub.url)
-                    print("Score: ", sub.score)
-                    print("------------------------\n")                 
-		
-                # Discard post below threshold if given
-                if threshold and sub.score < threshold:
-                    continue
+    for sub in sub_choice:
+        if sub.domain == "open.spotify.com":
+            addSpotifyTrack(fresh, threshold, includeAlbums, verbose, sub, tracks)
 
-                # If fresh flag given, discard post if not tagged [FRESH]
-                if fresh and "[FRESH]" not in sub.title:
-                    continue
-                    
-                # handle possible query string in url
-                url = sub.url.split('?')
-                formattedUrl = url[0] if url != None else sub.url
-
-                # handle adding tracks from albums
-                if includeAlbums and isMatch.group(1) == 'album':
-                    tracksInAlbum = spotifyObj.album_tracks(formattedUrl)
-                    trackIds = [item['external_urls']['spotify'] for item in tracksInAlbum['items']]
-                    tracks.extend(trackIds)
-                # handle adding tracks
-                elif isMatch.group(1) == 'track':
-                    tracks.append(formattedUrl)
         else:
             # handle non-spotify posts
             title, tags = filter_tags(sub.title)
@@ -338,26 +340,30 @@ def main():
                         track_url = extract_track_url(search)
                         if track_url:
                             tracks.append(track_url)
-        # handle overflow 
+        # handle overflow
         if len(tracks) > 90:
             tracks_array.append(tracks)
-            tracks = []                
+            tracks = []
 
     if len(tracks) > 0:
         tracks_array.append(tracks)
 
-    # handle remove duplicates of tracks before adding new tracks        
-    if tracks != [] or tracks_array != [] :
+    # handle remove duplicates of tracks before adding new tracks
+    if tracks != [] or tracks_array != []:
         try:
             if len(tracks_array) >= 1:
                 for tr in tracks_array:
                     for playlist in user.playlists:
                         # retrive information of the tracks in user's playlist
-                        existing_tracks = spotifyObj.user_playlist_tracks(user.username, playlist)
-                        spotifyObj.user_playlist_remove_all_occurrences_of_tracks(user.username, playlist, tr)
-                        results = spotifyObj.user_playlist_add_tracks(user.username, playlist, tr)
-                        if verbose: 
-                            print('New Tracks added to ', spotifyObj.user_playlist(user.username, playlist, 'name')['name'], ': ', abs(existing_tracks['total'] - spotifyObj.user_playlist_tracks(user.username, playlist)['total']))
+                        existing_tracks = spotifyObj.user_playlist_tracks(
+                            user.username, playlist)
+                        spotifyObj.user_playlist_remove_all_occurrences_of_tracks(
+                            user.username, playlist, tr)
+                        results = spotifyObj.user_playlist_add_tracks(
+                            user.username, playlist, tr)
+                        if verbose:
+                            print('New Tracks added to ', spotifyObj.user_playlist(user.username, playlist, 'name')['name'], ': ', abs(
+                                existing_tracks['total'] - spotifyObj.user_playlist_tracks(user.username, playlist)['total']))
                             print()
         except:
             if results == [] and verbose:
@@ -366,6 +372,6 @@ def main():
                 print("an error has occured removing or adding new tracks")
         # if verbose:
         #     print(tracks)
-            
+
 if __name__ == '__main__':
     main()
