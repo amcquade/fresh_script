@@ -246,7 +246,6 @@ def process_fresh():
     else:
         return False
 
-
 def process_subreddit(subreddit, choice, l):
     if choice.lower() == 'hot':
         sub_choice = subreddit.hot(limit=l)

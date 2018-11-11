@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %} Playlists {% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block page_style %}
+  <style type="text/css">
+  .jumbotron {
+  max-width: 85%;
+  }
+  .card {
+  margin: 10px;
+  }
+  .btn{
+  white-space:normal !important;
+  word-wrap: break-word;
+  }
+  </style>
+{% endblock %}
+{% block body %}
+  {% if Name %}
+    <p>Hello {{Name}}!</p>
+    <br>
+    <div class="accordion" id="accordionExample">
+      <!-- print tracks -->
+      {% for title, link, media in Track_info %}
+        <div class="card">
+          <div class="card-header" id="headingOne">
+
+            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            <h5 class="mb-0">{{ title }}
+            </button>
+            </h5>
+          </div>
+          <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+            <div class="card-body">
+              {{ media|safe }}
+              <a href="{{ link }}">{{ link }}</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>Hello friend! You are lost! Click <a href="/">here</a> to return home.</p>
+  {% endif %}
+{% endblock %}

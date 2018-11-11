@@ -3,3 +3,4 @@
 praw.ini
 __pycache__
 *.ini`
+venv/*
