@@ -36,7 +36,7 @@ PS C:\path\to\app> $env:FLASK_APP = "app.py"
 ```
 ### Debug Mode
 
-(Want to just log errors and stack traces? See [Application Error]s(http://flask.pocoo.org/docs/1.0/errorhandling/#application-errors))
+(Want to just log errors and stack traces? See [Application Errors](http://flask.pocoo.org/docs/1.0/errorhandling/#application-errors))
 
 The flask script is nice to start a local development server, but you would have to restart it manually after each change to your code. That is not very nice and Flask can do better. If you enable debug support the server will reload itself on code changes, and it will also provide you with a helpful debugger if things go wrong.
 
