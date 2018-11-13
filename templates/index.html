@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %} Fresh Flask {% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block page_style %}
+<style type="text/css">
+  .jumbotron {
+    max-width: 85%;
+  }
+
+</style>
+{% endblock %}
+{% block body %}
+  {% if Name %}
+    <div class="jumbotron">
+      <h1 class="display-4">Hello, {{Name}}!</h1>
+      <p class="lead">Welcome to the Fresh Flask! From here you can easily find and add music from /r/HipHopHeads.</p>
+      <hr class="my-4">
+      <p>What would you like to do?</p>
+      <ul>
+        <li><a href="/tracks">Add Tracks</a></li>
+        <li><a href="/manage-playlists">Manage Playlists</a></li>
+      </ul>
+      <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+    </div>
+  {% else %}
+    <p>Hello friend! Click here to setup the Fresh Flask!</p>
+  {% endif %}
+{% endblock %}

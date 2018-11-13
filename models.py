@@ -1,6 +1,9 @@
 import spotipy
 import spotipy.util as util
 import argparse
+import crontab
+from crontab import CronTab
+import textwrap
 
 # user object to hold the things
 class User:
@@ -130,3 +133,19 @@ class User:
         for index, playlist in enumerate(self.playlists):
             print(f"{index+1}. {sp.user_playlist(self.username, playlist, 'name')['name']}")
         print()
+
+    # use python-crontab to write a cron task    
+    def setupCron(self):
+        cron = CronTab()
+        cron_setting = textwrap.dedent("""\
+            ┌───────────── minute (0 - 59)
+            │ ┌───────────── hour (0 - 23) 
+            │ │ ┌───────────── day of month (1 - 31)
+            │ │ │ ┌───────────── month (1 - 12)
+            │ │ │ │ ┌───────────── day of week (0 - 6) (Sunday to Saturday;
+            │ │ │ │ │                                       7 is also Sunday on some systems)
+            │ │ │ │ │
+            │ │ │ │ │
+            * * * * *  command to execute
+        """)
+        choice = input(cron_setting)
