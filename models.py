@@ -1,5 +1,6 @@
 import spotipy
 import spotipy.util as util
+import argparse
 
 # user object to hold the things
 class User:
@@ -47,7 +48,7 @@ class User:
         playlistsToAddIndices = []
         while enteringPlaylists:
             print()
-            userInput = input('Enter the number of the playlist you would like to add, or [N/B] to fetch more/previous playlists: ').strip()
+            userInput = input('Enter the number of the playlist you would like to add, [N/B] to fetch more/previous playlists, or [Q] to quit: ').strip()
             try:
                 index = int(userInput)
                 if index < 1 or index > len(ownedPlaylists):
@@ -76,6 +77,9 @@ class User:
                         offset = offset + 50
                     finally:
                         self.printOwnedPlaylists(ownedPlaylists)
+                elif userInput.lower() in ('quit', 'q'):
+                    enteringPlaylists = False
+                    continue
                 else:
                     print()
                     print("Unexpected input!")
