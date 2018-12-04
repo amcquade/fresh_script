@@ -3,12 +3,9 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
-[packages]
-praw = "==6.0.0"
-spotipy = "==2.4.4"
-configparser = "==3.5.0"
-
 [dev-packages]
 
+[packages]
+
 [requires]
-python_version = "3.7"
+python_version = "3.6"
