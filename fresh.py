@@ -11,6 +11,7 @@ import argparse
 from constants import pun_dict
 from constants import ft_set
 from models import User
+import cutie
 
 
 def createUser():
@@ -194,10 +195,10 @@ def manage_playlists(user):
     """
     user.printPlaylists()
 
-    if user.str2bool(input('Would you like to remove a playlist? [Y/N] ').strip()):
+    if cutie.prompt_yes_or_no('Would you like to remove a playlist?'):
         user.removePlaylists()
 
-    if user.str2bool(input('Would you like to add a playlist? [Y/N] ').strip()):
+    if cutie.prompt_yes_or_no('Would you like to add a playlist?'):
         user.addPlaylists()
 
     user.printPlaylists()
@@ -213,7 +214,7 @@ def manage_playlists(user):
 def process_args(args, u):
     processed_args = (
         True if args.verbose else False,
-        args.limit if args.limit else int(input('enter post limit: ')),
+        args.limit if args.limit else cutie.get_number('Enter post limit:', 0, 999, False),
         args.sort if args.sort else process_choice_input(),
         args.threshold if args.threshold else None,
         True if args.include_albums else False,
@@ -224,27 +225,26 @@ def process_args(args, u):
 
 # process choice selection
 def process_choice_input():
-    inputPrompt = textwrap.dedent("""\
-        Enter your desired sorting method:
-            hot
-            new
-            rising
-            random_rising
-            controversial
-            top
-        """)
-    return input(inputPrompt)
+    inputPrompt = [
+        'Enter your desired sorting method:',
+        'hot',
+        'new',
+        'rising',
+        'random_rising',
+        'controversial',
+        'top'
+        ]
 
+    captions = [0]
+
+    prompt = inputPrompt[
+        cutie.select(inputPrompt, caption_indices=captions, selected_index=6)]
+    return prompt
 # process input for fresh arg
 
 
 def process_fresh():
-    fresh_input = input(
-        'Would you like to only add tracks tagged as [FRESH]? (y/n)')
-    if fresh_input.lower().strip() == "y":
-        return True
-    else:
-        return False
+    return cutie.prompt_yes_or_no('Would you like to only add tracks tagged as [FRESH]?')
 
 def process_subreddit(subreddit, choice, l):
     if choice.lower() == 'hot':
@@ -380,9 +380,9 @@ def main():
                             print()
         except:
             if results == [] and verbose:
-                print("no new tracks have been added.")
+                print("No new tracks have been added.")
             else:
-                print("an error has occured removing or adding new tracks")
+                print("An error has occured removing or adding new tracks")
         # if verbose:
         #     print(tracks)
 
