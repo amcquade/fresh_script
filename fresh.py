@@ -342,14 +342,6 @@ def main():
             addSpotifyTrack(fresh, threshold, includeAlbums, verbose, sub, tracks)
 
         else:
-            otherDomainList = ['youtu.be','youtube.com','soundcloud.com']
-            # handle non-spotify posts
-            if sub.domain in otherDomainList and verbose:
-                print("Post: ", sub.title)
-                print("URL: ", sub.url)
-                print("Score: ", sub.score)
-                print("------------------------\n")
-
             title, tags = filter_tags(sub.title)
             if 'discussion' not in tags:
                 if 'album' in tags or 'impressions' in tags:
@@ -361,6 +353,14 @@ def main():
                     if search:
                         track_url = extract_track_url(search)
                         if track_url:
+                            otherDomainList = ['youtu.be', 'youtube.com', 'soundcloud.com']
+                            # handle non-spotify posts
+                            if sub.domain in otherDomainList and verbose:
+                                print("Post: ", sub.title)
+                                print("URL: ", sub.url)
+                                print("Score: ", sub.score)
+                                print("------------------------\n")
+
                             tracks.append(track_url)
         # handle overflow
         if len(tracks) > 90:
