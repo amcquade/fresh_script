@@ -38,22 +38,24 @@ def createUserConfig(user, config_path='.config.ini'):
     with open(config_path, 'w') as f:
         s_config.write(f)
 
-def createPrawConfig(r_client_id, r_client_secret,
+def createPrawConfig(client_id, client_secret,
                      praw_path='praw.ini'):
     """
     Create praw.ini file for Reddit credentials.
 
     Parameters
     ----------
-    user: User object
-        Spotify user object.
+    client_id: str
+        Reddit app client id.
+    client_secret: str
+        Reddit app client secret.
     praw_path: str
         Path to praw.ini.
     """
     r_config = ConfigParser()
     r_config['bot1'] = {
-        'client_id': r_client_id,
-        'client_secret': r_client_secret,
+        'client_id': client_id,
+        'client_secret': client_secret,
         'user_agent': 'FreshScript'
     }
 
@@ -64,7 +66,7 @@ def createUser():
     user = None
     # read config file
     try:
-        if os.path.exists('credentials.json') and not os.path.isfile('.config.ini'):
+        if not os.path.isfile('.config.ini'):
             # load credentials file
             with open('credentials.json', 'r') as f:
                 credentials = json.load(f)
@@ -83,10 +85,12 @@ def createUser():
 
             # write config files
             createUserConfig(user)
+
             createPrawConfig(p_credentials['client_id'],
                              p_credentials['client_secret'])
 
-        elif not os.path.isfile('.config.ini'):
+        elif not os.path.isfile('.config.ini') \
+             and not os.path.isfile('credentials.json'):
             print('Credentials file not found!')
 
             # get credentials
