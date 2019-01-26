@@ -13,12 +13,82 @@ from constants import ft_set
 from models import User
 import cutie
 
+def createUserConfig(user, config_path='.config.ini'):
+    """
+    Create Spotify .config.ini file for Spotify credentials.
+
+    Parameters
+    ----------
+    user: User object
+        Spotify user object.
+
+    config_path: str
+        Path to .config.ini.
+
+    """
+    s_config = ConfigParser()
+    s_config['spotify'] = {
+        'client_id': user.client_id,
+        'client_secret': user.client_secret,
+        'username': user.username,
+        'playlist_id': user.getPlaylistsAsString(),
+        'redirect_uri': user.redirect
+    }
+
+    with open(config_path, 'w') as f:
+        s_config.write(f)
+
+def createPrawConfig(r_client_id, r_client_secret,
+                     praw_path='praw.ini'):
+    """
+    Create praw.ini file for Reddit credentials.
+
+    Parameters
+    ----------
+    user: User object
+        Spotify user object.
+    praw_path: str
+        Path to praw.ini.
+    """
+    r_config = ConfigParser()
+    r_config['bot1'] = {
+        'client_id': r_client_id,
+        'client_secret': r_client_secret,
+        'user_agent': 'FreshScript'
+    }
+
+    with open(praw_path, 'w') as p:
+        r_config.write(p)
 
 def createUser():
     user = None
     # read config file
     try:
-        if not os.path.isfile('.config.ini'):
+        if os.path.exists('credentials.json') and not os.path.isfile('.config.ini'):
+            # load credentials file
+            with open('credentials.json', 'r') as f:
+                credentials = json.load(f)
+
+            s_credentials = credentials['spotify']
+            p_credentials = credentials['reddit']
+
+            user = User(s_credentials['username'],
+                        s_credentials['client_id'],
+                        s_credentials['client_secret'],
+                        s_credentials['redirect'],
+                        []
+            )
+
+            user.addPlaylists()
+
+            # write config files
+            createUserConfig(user)
+            createPrawConfig(p_credentials['client_id'],
+                             p_credentials['client_secret'])
+
+        elif not os.path.isfile('.config.ini'):
+            print('Credentials file not found!')
+
             # get credentials
             s_client_id = input('Enter your Spotify Client ID: ').strip()
             s_client_secret = input(
@@ -31,29 +101,9 @@ def createUser():
             user = User(username, s_client_id, s_client_secret, redirect, [])
             user.addPlaylists()
 
-            # write spotify config
-            s_config = ConfigParser()
-            s_config['spotify'] = {
-                'client_id': s_client_id,
-                'client_secret': s_client_secret,
-                'username': username,
-                'playlist_id': user.getPlaylistsAsString(),
-                'redirect_uri': redirect
-            }
-
-            # write praw config
-            r_config = ConfigParser()
-            r_config['bot1'] = {
-                'client_id': r_client_id,
-                'client_secret': r_client_secret,
-                'user_agent': 'FreshScript'
-
-            }
-            with open('.config.ini', 'w') as f:
-                s_config.write(f)
-
-            with open('praw.ini', 'w') as p:
-                r_config.write(p)
+            # write config files
+            createUserConfig(user)
+            createPrawConfig(r_client_id, r_client_secret)
 
         else:
             # parse config
