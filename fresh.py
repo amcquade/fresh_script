@@ -15,7 +15,7 @@ import cutie
 
 def createUserConfig(user, config_path='.config.ini'):
     """
-    Create Spotify .config.ini file for Spotify credentials.
+    Create .config.ini file for Spotify credentials.
 
     Parameters
     ----------
@@ -66,7 +66,7 @@ def createUser():
     user = None
     # read config file
     try:
-        if not os.path.isfile('.config.ini'):
+        if os.path.exists('credentials.json') and not os.path.isfile('.config.ini'):
             # load credentials file
             with open('credentials.json', 'r') as f:
                 credentials = json.load(f)
@@ -89,8 +89,7 @@ def createUser():
             createPrawConfig(p_credentials['client_id'],
                              p_credentials['client_secret'])
 
-        elif not os.path.isfile('.config.ini') \
-             and not os.path.isfile('credentials.json'):
+        elif not os.path.isfile('.config.ini'):
             print('Credentials file not found!')
 
             # get credentials
