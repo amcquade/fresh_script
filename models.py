@@ -4,6 +4,7 @@ import argparse
 import crontab
 from crontab import CronTab
 import textwrap
+import praw
 
 # user object to hold the things
 class User:
@@ -42,7 +43,7 @@ class User:
         offset = 0
         try:
             ownedPlaylists = self.fetchPlaylists(offset)
-        except: 
+        except:
             print("You don't have any Spotify playlists!")
             return
         self.printOwnedPlaylists(ownedPlaylists)
@@ -64,11 +65,11 @@ class User:
                     offset = offset + 50
                     try:
                         ownedPlaylists = self.fetchPlaylists(offset)
-                    except: 
+                    except:
                         print()
                         print("No more playlists to view.")
                         offset = offset - 50
-                    finally: 
+                    finally:
                         self.printOwnedPlaylists(ownedPlaylists)
                 elif userInput.lower() in ('back', 'b', 'previous', 'prev', 'p'):
                     offset = offset - 50
@@ -91,7 +92,7 @@ class User:
                 print("That playlist number doesn't exist!")
             enteringPlaylists = self.str2bool(input('Would you like to enter another playlist ID? [Y/N] ').strip())
         self.playlists.extend(playlistsToAdd)
-    
+
     # fetch playlists given the provided offset
     def fetchPlaylists(self, offset):
         sp = spotipy.Spotify(auth=self.token)
@@ -101,7 +102,7 @@ class User:
         userId = sp.current_user()['id']
         ownedPlaylists = list(filter(lambda x: x['owner']['id'] == userId and x['id'] not in self.playlists, spotifyPlaylists['items']))
         return ownedPlaylists
-    
+
     # prints the Spotify playlists that are owned by the user
     def printOwnedPlaylists(self, ownedPlaylists):
         if len(ownedPlaylists) == 0:
@@ -134,12 +135,12 @@ class User:
             print(f"{index+1}. {sp.user_playlist(self.username, playlist, 'name')['name']}")
         print()
 
-    # use python-crontab to write a cron task    
+    # use python-crontab to write a cron task
     def setupCron(self):
         cron = CronTab()
         cron_setting = textwrap.dedent("""\
             ┌───────────── minute (0 - 59)
-            │ ┌───────────── hour (0 - 23) 
+            │ ┌───────────── hour (0 - 23)
             │ │ ┌───────────── day of month (1 - 31)
             │ │ │ ┌───────────── month (1 - 12)
             │ │ │ │ ┌───────────── day of week (0 - 6) (Sunday to Saturday;
@@ -149,3 +150,12 @@ class User:
             * * * * *  command to execute
         """)
         choice = input(cron_setting)
+
+# Reddit class
+class RedditData:
+    reddit = ""
+    sub_reddit = ""
+
+    def __init__(self, sub_reddit, reddit=None):
+        self.reddit = praw.Reddit('bot1')
+        self.sub_reddit = self.reddit.subreddit(sub_reddit)

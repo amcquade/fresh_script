@@ -3,27 +3,14 @@
 {% block head %}
   {{ super() }}
 {% endblock %}
-{% block page_style %}
-  <style type="text/css">
-  .jumbotron {
-  max-width: 85%;
-  }
-  .card {
-  margin: 10px;
-  }
-  .btn{
-  white-space:normal !important;
-  word-wrap: break-word;
-  }
-  </style>
-{% endblock %}
+
 {% block body %}
-  {% if Name %}
+  {% if track_info %}
     <p>Hello {{Name}}!</p>
     <br>
     <div class="accordion" id="accordionExample">
       <!-- print tracks -->
-      {% for title, link, media in Track_info %}
+      {% for title, link, media in track_info %}
         <div class="card">
           <div class="card-header" id="headingOne">
 
@@ -42,6 +29,13 @@
       {% endfor %}
     </div>
   {% else %}
-    <p>Hello friend! You are lost! Click <a href="/">here</a> to return home.</p>
+  <br />
+  <div class="alert alert-warning" role="alert">
+    {% if subreddit %}
+    Hello friend! We could not find any tracks with the entered subreddit "{{ subreddit }}"
+    {% else %}
+    Please provide a subreddit!
+    {% endif %}
+  </div>
   {% endif %}
 {% endblock %}
