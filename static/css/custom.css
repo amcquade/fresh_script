@@ -1,0 +1,29 @@
+/* change the background color */
+.navbar-custom {
+    background-color: #D3D3D3;
+}
+/* change the brand and text color */
+.navbar-custom .navbar-brand,
+.navbar-custom .navbar-text {
+    color: #000000;
+    padding: 0.8rem 1rem;
+}
+/* change the link color and add padding for height */
+.navbar-custom .navbar-nav .nav-link {
+    color: #4F8AC7;
+    padding: 1rem 1rem;
+}
+/* change the color of active or hovered links */
+.navbar-custom .nav-item.active .nav-link,
+.navbar-custom .nav-item:hover .nav-link {
+    color: #FFFFFF;
+    background-color: #4F8AC7; /* add background-color to active links */
+}
+
+.card-custom {
+  background-color: #4F8AC7;
+  color: #FFFFFF;
+  padding: 1rem 1rem;
+}
+
+body { background:  #D3D3D3;}

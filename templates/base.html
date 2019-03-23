@@ -12,21 +12,16 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
     <!-- base.html styles -->
-    <style type="text/css">
-    html {
-    background-image: linear-gradient(#93278F, #00A99D);
-    min-height: 100%;
-    min-width: 100%;
-    }
-    body {
-    background-color: inherit;
-    }
-    </style>
+
+    {% include '_navbar.html' %}
     <!-- <template>.html styles -->
     {% block page_style %} {% endblock %}
   </head>
   <body>
+    <div class="cointainer-fluid">
     {% block body %}{% endblock %}
+  </div>
   </body>
 </html>
