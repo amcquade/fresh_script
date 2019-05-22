@@ -75,10 +75,25 @@ We can use cron to automatically run the script periodically in order to keep it
     | ----------- Hour (0 - 23)
     ------------- Minute (0 - 59)
     ```
-    For example, you would do the following to run this everyday at 9AM
+    Cron settings can be tricky. See below for some examples of cron job settings for different ways to run the script periodically.
+    
+    For example, you would do the following to run this everyday at 9AM:
     ```
     0 9 * * * python /home/jsmith/fresh.py
     ```
+    Between certain hours of the day:
+    ```
+    0 9-17 * * * python /home/jsmith/fresh.py
+    ```
+    Every weekday at 8 AM:
+    ```
+    0 8 * * 1-5 python /home/jsmith/fresh.py
+    ```
+    Every Friday and Saturday between 5 AM and 10 PM every Friday and Saturday:
+    ```
+    0 5-22 * * 5-6 python /home/jsmith/fresh.py
+    ```
+    
 
 ## Contributing
 
