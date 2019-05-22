@@ -81,7 +81,7 @@ We can use cron to automatically run the script periodically in order to keep it
     ```
     0 9 * * * python /home/jsmith/fresh.py
     ```
-    Between certain hours of the day:
+    Between 9 AM and 5 PM every day:
     ```
     0 9-17 * * * python /home/jsmith/fresh.py
     ```
