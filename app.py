@@ -24,11 +24,11 @@ def home(Name=None):
 @app.route('/tracks', methods=['GET', 'POST'])
 def tracks(Name=None):
     sub_reddit = request.form.get('inputvalue').strip()
+    tag_choice = request.form.get('taglist')
     reddit_data = ""
     if sub_reddit:
         reddit_data = RedditData(sub_reddit)
-
-        sub_choice = process_subreddit(reddit_data.sub_reddit, 'hot', 25)
+        sub_choice = process_subreddit(reddit_data.sub_reddit, tag_choice, 25)
         tracks = []
         titles = []
         images = []

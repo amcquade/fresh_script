@@ -7,6 +7,14 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <form class="form-inline" action="/tracks" method="post">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="inputvalue">
+      <select class="form-control mr-sm-2 custom-select" name="taglist">
+        <option value="hot">Hot</option>
+        <option value="new">New</option>
+        <option value="rising">Rising</option>
+        <option value="random_rising">Random Rising</option>
+        <option value="controversial">Controversial</option>
+        <option value="top">Top</option>
+      </select>
       <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
     </form>
     <ul class="navbar-nav pl-5">
