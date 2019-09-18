@@ -77,7 +77,7 @@ def createUserAgentString(config_file='credentials.json'):
 
     Raises
     ------
-    InvalidConfigFile: ConfigurationError
+    InvalidConfigFile:
         if config_file is missing a certain section or key
     """
     platform = "Python3"
