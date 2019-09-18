@@ -12,6 +12,10 @@ from constants import pun_dict
 from constants import ft_set
 from models import User
 import cutie
+import git
+
+class InvalidConfigFile(Exception):
+    """The configuration file is missing a certain section or key"""
 
 def createUserConfig(user, config_path='.config.ini'):
     """
@@ -61,6 +65,48 @@ def createPrawConfig(client_id, client_secret,
 
     with open(praw_path, 'w') as p:
         r_config.write(p)
+
+def createUserAgentString(config_file='credentials.json'):
+    """
+    Create a user-agent string which follows reddit API rules.
+
+    Parameters
+    ----------
+    config_file: str
+        File from which to read user's reddit username.
+
+    Raises
+    ------
+    InvalidConfigFile: ConfigurationError
+        if config_file is missing a certain section or key
+    """
+    platform = "Python3"
+    app = "FreshScript"
+    github_url = "https://github.com/amcquade/fresh_script"
+
+    # Check containing folder for git repository. This is used as an
+    # ad hoc versioning system.
+    try:
+        repo = git.Repo()
+    except git.exc.InvalidGitRepositoryError:
+        repo = None
+    hexsha = repo.head.object.hexsha[:7] if repo else "UNKNOWN"
+    # TODO: adopt semantic versioning (https://semver.org)
+
+    # Fetch reddit username from file
+    with open(config_file, 'r') as f:
+        config = json.load(f)
+    try:
+        reddit_username = config['reddit']['username']
+    except KeyError as e:
+        raise InvalidConfigFile(f"{config_file!r}") from e
+
+    user_agent = ' '.join([
+        f"{platform}:{app}:(commit {hexsha})",
+        f"(by /u/{reddit_username})",
+        f"({github_url})"
+    ])
+    return user_agent
 
 def createUser():
     user = None
@@ -374,7 +420,8 @@ def main():
     args = argparser.parse_args()
 
     # connect to reddit bot
-    reddit = praw.Reddit('bot1')
+    user_agent = createUserAgentString()
+    reddit = praw.Reddit('bot1', user_agent=user_agent)
     subreddit = reddit.subreddit('hiphopheads')
 
     # create spotipy obj
