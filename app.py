@@ -3,6 +3,7 @@ from fresh import filter_tags, extract_track_url, addSpotifyTrack, createUser, p
 from models import RedditData
 import spotipy
 import prawcore
+import logging
 
 from xml.sax import saxutils as su
 
@@ -102,4 +103,5 @@ def page_not_found(e):
 #   return render_template('about.html')
 
 if __name__ == '__main__':
+    logging.basicConfig(filename='./log/flask_output.log', level=logging.DEBUG)
     app.run(debug=True, use_reloader=True, host='0.0.0.0', port=8300)
