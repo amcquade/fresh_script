@@ -102,6 +102,16 @@ We can use cron to automatically run the script periodically in order to keep it
     ```
     0 9 * * * python /home/jsmith/fresh.py
     ```
+    
+    To run this every Sunday at midnight, you could use this:
+    ```
+    0 0 * * 0 python /home/jsmith/fresh.py
+    ```
+    
+    And finally to run this every first of the month, you could use this:
+    ```
+    0 0 1 * * python /home/jsmith/fresh.py
+    ```
 
 ## Contributing
 
