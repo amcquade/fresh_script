@@ -20,9 +20,10 @@ setup(
         'Intended Audience :: End Users/Desktop',
         'License :: MIT License',
         'Programming Language :: Python :: 3.7',
+        'Topic :: Software :: Music Tools',
     ],
 
-    keywords='spotify reddit HipHopHeads hiphop',
+    keywords='spotify reddit HipHopHeads hiphop music',
 
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
 
