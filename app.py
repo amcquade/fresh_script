@@ -3,8 +3,18 @@ from fresh import filter_tags, extract_track_url, addSpotifyTrack, createUser, p
 from models import RedditData
 import spotipy
 import prawcore
+import logging
 
 from xml.sax import saxutils as su
+
+# Setting up logger
+logging.basicConfig(
+    filename='fresh_script.log',
+    filemode='w+',
+    format='%(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
 
 # global objects
 app = Flask(__name__)
@@ -43,6 +53,7 @@ def tracks(Name=None):
                     media = sub.media_embed
                     images.append(su.unescape(media['content']))
                     print("spotify media:", media)
+                    logger.info("spotify media:", media)
 
                 else:
                     # handle non-spotify posts
@@ -62,14 +73,17 @@ def tracks(Name=None):
 
                                     media = sub.media_embed
                                     print("other media:", media)
+                                    logger.info("other media:", media)
                                     if 'content' in media:
                                       s = su.unescape(media['content'])
                                       images.append(s)
 
                                       print("content media:", s)
+                                      logger.info("content media:", s)
                                     else:
                                       images.append(media)
                                       print("other media:", media)
+                                      logger.info("other media:", media)
 
         # zip tracks and info together to be rendered on the tracks page
             track_info = zip(titles, tracks, images)
