@@ -12,6 +12,11 @@ from constants import pun_dict
 from constants import ft_set
 from models import User
 import cutie
+import logger
+
+# Getting logger
+logger = logging.getLogger(__name__)
+
 
 def createUserConfig(user, config_path='.config.ini'):
     """
@@ -91,6 +96,7 @@ def createUser():
 
         elif not os.path.isfile('.config.ini'):
             print('Credentials file not found!')
+            logger.info('Credentials file not found!')
 
             # get credentials
             s_client_id = input('Enter your Spotify Client ID: ').strip()
@@ -129,6 +135,7 @@ def createUser():
             '''
     except Exception as e:
         print(f'config failure: {e}')
+        logger.error(f'config failure: {e}')
 
     return user
 
@@ -314,6 +321,7 @@ def process_subreddit(subreddit, choice, l):
         sub_choice = subreddit.top(limit=l)
     else:
         print("Unsupported sorting method")
+        logger.warn("Unsupported sorting method")
         sys.exit()
     return sub_choice
 
@@ -327,6 +335,10 @@ def addSpotifyTrack(fresh, threshold, includeAlbums, verbose, sub, tracks):
             print("URL: ", sub.url)
             print("Score: ", sub.score)
             print("------------------------\n")
+
+            logger.info("Post: ", sub.title)
+            logger.info("URL: ", sub.url)
+            logger.info("Score: ", sub.score)
 
         # Discard post below threshold if given
         if threshold and sub.score < threshold:
@@ -382,6 +394,7 @@ def main():
     spotifyObj.trace = False
     if args.verbose:
         print('Welcome to the HipHopHeads Fresh Script')
+        logger.info('Welcome to the HipHopHeads Fresh Script')
     verbose, l, choice, threshold, includeAlbums, fresh = process_args(
         args, user)
     sub_choice = process_subreddit(subreddit, choice, l)
@@ -412,6 +425,10 @@ def main():
                                 print("Score: ", sub.score)
                                 print("------------------------\n")
 
+                                logger.info("Post: ", sub.title)
+                                logger.info("URL: ", sub.url)
+                                logger.info("Score: ", sub.score)
+
                             tracks.append(track_url)
         # handle overflow
         if len(tracks) > 90:
@@ -438,13 +455,18 @@ def main():
                             print('New Tracks added to ', spotifyObj.user_playlist(user.username, playlist, 'name')['name'], ': ', abs(
                                 existing_tracks['total'] - spotifyObj.user_playlist_tracks(user.username, playlist)['total']))
                             print()
+                            logger.info('New Tracks added to ', spotifyObj.user_playlist(user.username, playlist, 'name')['name'], ': ', abs(
+                                existing_tracks['total'] - spotifyObj.user_playlist_tracks(user.username, playlist)['total']))
         except:
             if results == [] and verbose:
                 print("No new tracks have been added.")
+                logger.error("No new tracks have been added.")
             else:
                 print("An error has occured removing or adding new tracks")
+                logger.error("An error has occured removing or adding new tracks")
         # if verbose:
         #     print(tracks)
+        #     logger.error(tracks)
 
 if __name__ == '__main__':
     main()

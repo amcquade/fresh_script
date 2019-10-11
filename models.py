@@ -5,6 +5,11 @@ import crontab
 from crontab import CronTab
 import textwrap
 import praw
+import logging
+
+# Getting logger
+logger = logging.getLogger(__name__)
+
 
 # user object to hold the things
 class User:
@@ -45,6 +50,7 @@ class User:
             ownedPlaylists = self.fetchPlaylists(offset)
         except:
             print("You don't have any Spotify playlists!")
+            logger.error("You don't have any Spotify playlists!")
             return
         self.printOwnedPlaylists(ownedPlaylists)
         enteringPlaylists = True
@@ -68,6 +74,7 @@ class User:
                     except:
                         print()
                         print("No more playlists to view.")
+                        logger.error("No more playlists to view.")
                         offset = offset - 50
                     finally:
                         self.printOwnedPlaylists(ownedPlaylists)
@@ -78,6 +85,7 @@ class User:
                     except:
                         print()
                         print("No previous playlists to view.")
+                        logger.error("No previous playlists to view.")
                         offset = offset + 50
                     finally:
                         self.printOwnedPlaylists(ownedPlaylists)
@@ -87,9 +95,11 @@ class User:
                 else:
                     print()
                     print("Unexpected input!")
+                    logger.error("Unexpected input!")
                 continue
             except:
-                print("That playlist number doesn't exist!")
+                print("That playlist number doesn't exist!")'
+                logger.error("Unexpected input!")'
             enteringPlaylists = self.str2bool(input('Would you like to enter another playlist ID? [Y/N] ').strip())
         self.playlists.extend(playlistsToAdd)
 
@@ -108,11 +118,14 @@ class User:
         if len(ownedPlaylists) == 0:
             print()
             print("You do not own any playlists in this batch. Type 'n' or 'next' to go to the next one.")
+            logger.warn("You do not own any playlists in this batch. Type 'n' or 'next' to go to the next one.")
         else:
             for i, playlist in enumerate(ownedPlaylists):
                 print()
                 print(f"{i+1}. {playlist['name']}")
                 print('  total tracks', playlist['tracks']['total'])
+                logger.info(f"{i+1}. {playlist['name']}")
+                logger.info('  total tracks', playlist['tracks']['total'])
 
     # prompt user to remove current playlists
     def removePlaylists(self):
@@ -125,14 +138,17 @@ class User:
                 del self.playlists[index-1]
             except:
                 print("That playlist number doesn't exist!")
+                logger.error("That playlist number doesn't exist!")
             removingPlaylists = self.str2bool(input('Would you like to remove another playlist? [Y/N] ').strip())
 
     # print out numbered list of the names of the playlists that are currently being added to
     def printPlaylists(self):
         sp = spotipy.Spotify(auth=self.token)
         print("\nYour current playlists are:")
+        logger.info(Your current playlists are:")
         for index, playlist in enumerate(self.playlists):
             print(f"{index+1}. {sp.user_playlist(self.username, playlist, 'name')['name']}")
+            logger.info(f"{index+1}. {sp.user_playlist(self.username, playlist, 'name')['name']}")
         print()
 
     # use python-crontab to write a cron task
