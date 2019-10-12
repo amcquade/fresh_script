@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, render_template, request
-from fresh import filter_tags, extract_track_url, addSpotifyTrack, createUser, process_subreddit
+from fresh import filter_tags, extract_track_url, addSpotifyTrack, createUser, process_subreddit, server_log
 from models import RedditData
 import spotipy
 import prawcore
@@ -97,9 +97,12 @@ def manage_playlists(Name=None, Playlists=None):
 
 @app.errorhandler(404)
 def page_not_found(e):
+    fresh.server_log(User, "404: Page not found")
     return render_template('404.html')
 # @App.route('/about')
 #   return render_template('about.html')
 
 if __name__ == '__main__':
+    fresh.server_log(User, "Starting Server")
     app.run(debug=True, use_reloader=True, host='0.0.0.0', port=8300)
+    fresh.server_log(User, "Stopping Server")

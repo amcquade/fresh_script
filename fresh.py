@@ -12,6 +12,8 @@ from constants import pun_dict
 from constants import ft_set
 from models import User
 import cutie
+import time
+from datetime import date
 
 def createUserConfig(user, config_path='.config.ini'):
     """
@@ -132,6 +134,15 @@ def createUser():
 
     return user
 
+def server_log(user, message):
+    """
+    Create a log file
+    """
+    LOGFILE = "log/LOG-" + date.fromtimestamp(time.time()).isoformat() + ".txt"
+
+    with open(LOGFILE, "a") as log:
+        log_entry = f"User: {user} [{time.asctime()}] : {message}\n"
+        log.write(log_entry)
 
 def filter_tags(title):
     """
