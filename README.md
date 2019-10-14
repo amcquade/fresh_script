@@ -102,7 +102,14 @@ We can use cron to automatically run the script periodically in order to keep it
     ```
     0 9 * * * python /home/jsmith/fresh.py
     ```
-
+    Check and add top 10 posts with FRESH tag everyday at 9AM
+    ```
+    0 9 * * * cd /home/jsmith/fresh_script && /usr/local/bin/pipenv run python fresh.py -s top -l 10 -f
+    ```
+    Check 100 'rising' posts with FRESH tag and has 50+ score everyday at 9AM
+    ```
+    0 9 * * * cd /home/jsmith/fresh_script && /usr/local/bin/pipenv run python fresh.py -s hot -l 100 -f -t 50
+    ```
 ## Contributing
 
 I appreciate any help and support. Feel free to [fork](https://github.com/amcquade/fresh_script#fork-destination-box) and [create a pull request](https://github.com/amcquade/fresh_script/compare)
