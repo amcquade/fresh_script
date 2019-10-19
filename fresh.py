@@ -424,6 +424,7 @@ def main():
     # handle remove duplicates of tracks before adding new tracks
     if tracks != [] or tracks_array != []:
         try:
+            results = []
             if len(tracks_array) >= 1:
                 for tr in tracks_array:
                     for playlist in user.playlists:
