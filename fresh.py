@@ -3,6 +3,7 @@ import re
 import sys
 import os
 import json
+import logging
 import webbrowser
 import textwrap
 import spotipy
@@ -12,6 +13,22 @@ from constants import pun_dict
 from constants import ft_set
 from models import User
 import cutie
+
+# Adding formatter for the logger
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+# Adding file handler to write logs to file
+fresh_fh = logging.FileHandler('fresh.log')
+fresh_fh.setLevel(logging.DEBUG)
+fresh_fh.setFormatter(formatter)
+# Adding console handler to write logs to console as well
+fresh_ch = logging.StreamHandler()
+fresh_ch.setLevel(logging.ERROR)
+fresh_ch.setFormatter(formatter)
+# Initiating a logger object and adding all handlers to it
+logger = logging.getLogger('fresh_logs')
+logger.setLevel(logging.DEBUG)
+logger.addHandler(fresh_fh)
+logger.addHandler(fresh_ch)
 
 def createUserConfig(user, config_path='.config.ini'):
     """
@@ -90,7 +107,7 @@ def createUser():
                              p_credentials['client_secret'])
 
         elif not os.path.isfile('.config.ini'):
-            print('Credentials file not found!')
+            logger.debug('Credentials file not found!')
 
             # get credentials
             s_client_id = input('Enter your Spotify Client ID: ').strip()
@@ -128,7 +145,7 @@ def createUser():
             config['soundcloud'] = {}
             '''
     except Exception as e:
-        print(f'config failure: {e}')
+        logger.error(f'config failure: {e}')
 
     return user
 
@@ -313,20 +330,20 @@ def process_subreddit(subreddit, choice, l):
     elif choice.lower() == 'top':
         sub_choice = subreddit.top(limit=l)
     else:
-        print("Unsupported sorting method")
+        logger.error("Unsupported sorting method")
         sys.exit()
     return sub_choice
 
 
-def addSpotifyTrack(fresh, threshold, includeAlbums, verbose, sub, tracks):
+def addSpotifyTrack(spotifyObj, fresh, threshold, includeAlbums, verbose, sub, tracks):
     # check if post is a track or album
     isMatch = re.search('(track|album)', sub.url)
     if isMatch != None:
         if verbose:
-            print("Post: ", sub.title)
-            print("URL: ", sub.url)
-            print("Score: ", sub.score)
-            print("------------------------\n")
+            logger.debug("Post: {}".format(sub.title))
+            logger.debug("URL: {}".format(sub.url))
+            logger.debug("Score: {}".format(sub.score))
+            logger.debug("------------------------\n")
 
         # Discard post below threshold if given
         if threshold and sub.score < threshold:
@@ -390,7 +407,7 @@ def main():
     tracks_array = []
     for sub in sub_choice:
         if sub.domain == "open.spotify.com":
-            addSpotifyTrack(fresh, threshold, includeAlbums, verbose, sub, tracks)
+            addSpotifyTrack(spotifyObj, fresh, threshold, includeAlbums, verbose, sub, tracks)
 
         else:
             title, tags = filter_tags(sub.title)
@@ -407,10 +424,10 @@ def main():
                             otherDomainList = ['youtu.be', 'youtube.com', 'soundcloud.com']
                             # handle non-spotify posts
                             if sub.domain in otherDomainList and verbose:
-                                print("Post: ", sub.title)
-                                print("URL: ", sub.url)
-                                print("Score: ", sub.score)
-                                print("------------------------\n")
+                                logger.debug("Post: {}".format(sub.title))
+                                logger.debug("URL: {}".format(sub.url))
+                                logger.debug("Score: {}".format(sub.score))
+                                logger.debug("------------------------\n")
 
                             tracks.append(track_url)
         # handle overflow
@@ -436,14 +453,14 @@ def main():
                         results = spotifyObj.user_playlist_add_tracks(
                             user.username, playlist, tr)
                         if verbose:
-                            print('New Tracks added to ', spotifyObj.user_playlist(user.username, playlist, 'name')['name'], ': ', abs(
-                                existing_tracks['total'] - spotifyObj.user_playlist_tracks(user.username, playlist)['total']))
+                            logger.info('New Tracks added to {}'.format((spotifyObj.user_playlist(user.username, playlist, 'name')['name'], ': ', abs(
+                                existing_tracks['total'] - spotifyObj.user_playlist_tracks(user.username, playlist)['total']))))
                             print()
         except:
             if results == [] and verbose:
-                print("No new tracks have been added.")
+                logger.info("No new tracks have been added.")
             else:
-                print("An error has occured removing or adding new tracks")
+                logger.error("An error has occured removing or adding new tracks")
         # if verbose:
         #     print(tracks)
 
