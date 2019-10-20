@@ -1,6 +1,7 @@
 import spotipy
 import spotipy.util as util
 import argparse
+import logging
 import crontab
 from crontab import CronTab
 import textwrap
@@ -8,6 +9,22 @@ import praw
 
 # user object to hold the things
 class User:
+    # Adding formatter for the logger
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    # Adding file handler to write logs to file
+    fresh_fh = logging.FileHandler('fresh.log')
+    fresh_fh.setLevel(logging.DEBUG)
+    fresh_fh.setFormatter(formatter)
+    # Adding console handler to write logs to console as well
+    fresh_ch = logging.StreamHandler()
+    fresh_ch.setLevel(logging.ERROR)
+    fresh_ch.setFormatter(formatter)
+    # Initiating a logger object and adding all handlers to it
+    logger = logging.getLogger('fresh_logs')
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(fresh_fh)
+    logger.addHandler(fresh_ch)
+
     def __init__(self, username, client_id, client_secret, redirect, playlists):
         self.username = username
         self.client_id = client_id
@@ -44,7 +61,7 @@ class User:
         try:
             ownedPlaylists = self.fetchPlaylists(offset)
         except:
-            print("You don't have any Spotify playlists!")
+            User.logger.info("You don't have any Spotify playlists!")
             return
         self.printOwnedPlaylists(ownedPlaylists)
         enteringPlaylists = True
@@ -67,7 +84,7 @@ class User:
                         ownedPlaylists = self.fetchPlaylists(offset)
                     except:
                         print()
-                        print("No more playlists to view.")
+                        User.logger.info("No more playlists to view.")
                         offset = offset - 50
                     finally:
                         self.printOwnedPlaylists(ownedPlaylists)
@@ -77,7 +94,7 @@ class User:
                         ownedPlaylists = self.fetchPlaylists(offset)
                     except:
                         print()
-                        print("No previous playlists to view.")
+                        User.logger.info("No previous playlists to view.")
                         offset = offset + 50
                     finally:
                         self.printOwnedPlaylists(ownedPlaylists)
@@ -89,7 +106,7 @@ class User:
                     print("Unexpected input!")
                 continue
             except:
-                print("That playlist number doesn't exist!")
+                User.logger.error("That playlist number doesn't exist!")
             enteringPlaylists = self.str2bool(input('Would you like to enter another playlist ID? [Y/N] ').strip())
         self.playlists.extend(playlistsToAdd)
 
@@ -111,8 +128,8 @@ class User:
         else:
             for i, playlist in enumerate(ownedPlaylists):
                 print()
-                print(f"{i+1}. {playlist['name']}")
-                print('  total tracks', playlist['tracks']['total'])
+                User.logger.debug(f"{i+1}. {playlist['name']}")
+                User.logger.debug('  total tracks {}'.format(playlist['tracks']['total']))
 
     # prompt user to remove current playlists
     def removePlaylists(self):
@@ -124,15 +141,15 @@ class User:
                 index = int(index)
                 del self.playlists[index-1]
             except:
-                print("That playlist number doesn't exist!")
+                User.logger.error("That playlist number doesn't exist!")
             removingPlaylists = self.str2bool(input('Would you like to remove another playlist? [Y/N] ').strip())
 
     # print out numbered list of the names of the playlists that are currently being added to
     def printPlaylists(self):
         sp = spotipy.Spotify(auth=self.token)
-        print("\nYour current playlists are:")
+        User.logger.info("\nYour current playlists are:")
         for index, playlist in enumerate(self.playlists):
-            print(f"{index+1}. {sp.user_playlist(self.username, playlist, 'name')['name']}")
+            User.logger.debug(f"{index+1}. {sp.user_playlist(self.username, playlist, 'name')['name']}")
         print()
 
     # use python-crontab to write a cron task
