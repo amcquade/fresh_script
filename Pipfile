@@ -9,6 +9,7 @@ spotipy = "==2.4.4"
 configparser = "==3.5.0"
 cutie = "==0.2.2"
 crontab = "*"
+gitpython = "*"
 
 [dev-packages]
 pylint = "*"
