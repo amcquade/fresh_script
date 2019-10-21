@@ -99,10 +99,15 @@ We can use cron to automatically run the script periodically in order to keep it
     | ----------- Hour (0 - 23)
     ------------- Minute (0 - 59)
     ```
-    For example, you would do the following to run this everyday at 9AM
+    Example 1: To run this everyday at 9AM, you would do the following
     ```
     0 9 * * * python /home/jsmith/fresh.py
     ```
+    Example 2: To run this every hour between 3AM to 3PM, you would do the following
+    ```
+    * 3-15 * * * python /home/jsmith/fresh.py
+    ```
+    Note: To check the following site https://crontab.guru/  to verify if the cron values are set properly according to your needs, the site will tell you what cron setting you have picked.    
 
 ## Contributing
 
