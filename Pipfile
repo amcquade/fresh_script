@@ -10,6 +10,7 @@ configparser = "==3.5.0"
 cutie = "==0.2.2"
 crontab = "*"
 flask = "*"
+gitpython = "*"
 
 [dev-packages]
 pylint = "*"

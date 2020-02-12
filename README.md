@@ -34,6 +34,7 @@ To set up your credentials, create a new file called `credentials.json` in the r
         "redirect": "[redirect uri]"
     },
     "reddit": {
+        "username": "[reddit username]",
         "client_id": "[praw client id]",
         "client_secret": "[praw client secret]"
     }
