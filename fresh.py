@@ -254,7 +254,7 @@ def filter_tags(title):
     return filtered_title, tags
 
 
-def extract_track_url(search):
+def extract_track_url(search_results):
     """
     Get the first Spotify track url from a given search.
 
@@ -262,7 +262,7 @@ def extract_track_url(search):
 
     Parameters
     ----------
-    search : dict
+    search_results : dict
         Contains information relating to Spotify API track search request.
 
     Returns
@@ -271,8 +271,8 @@ def extract_track_url(search):
         Spotify URL for the first track received from search query.
     """
 
-    if 'tracks' in search:
-        tracks = search['tracks']
+    if 'tracks' in search_results:
+        tracks = search_results['tracks']
         if 'items' in tracks:
             items = tracks['items']
             # take the first url we can find
@@ -345,23 +345,24 @@ def process_choice_input():
 def process_fresh():
     return cutie.prompt_yes_or_no('Would you like to only add tracks tagged as [FRESH]?')
 
-def process_subreddit(subreddit, choice, l):
-    if choice.lower() == 'hot':
-        sub_choice = subreddit.hot(limit=l)
-    elif choice.lower() == 'new':
-        sub_choice = subreddit.new(limit=l)
-    elif choice.lower() == 'rising':
-        sub_choice = subreddit.rising(limit=l)
-    elif choice.lower() == 'random_rising':
-        sub_choice = subreddit.random_rising(limit=l)
-    elif choice.lower() == 'controversial':
-        sub_choice = subreddit.controversial(limit=l)
-    elif choice.lower() == 'top':
-        sub_choice = subreddit.top(limit=l)
+
+def process_subreddit(subreddit, subreddit_list_by, limit):
+    if subreddit_list_by.lower() == 'hot':
+        submissions = subreddit.hot(limit=limit)
+    elif subreddit_list_by.lower() == 'new':
+        submissions = subreddit.new(limit=limit)
+    elif subreddit_list_by.lower() == 'rising':
+        submissions = subreddit.rising(limit=limit)
+    elif subreddit_list_by.lower() == 'random_rising':
+        submissions = subreddit.random_rising(limit=limit)
+    elif subreddit_list_by.lower() == 'controversial':
+        submissions = subreddit.controversial(limit=limit)
+    elif subreddit_list_by.lower() == 'top':
+        submissions = subreddit.top(limit=limit)
     else:
         print("Unsupported sorting method")
         sys.exit()
-    return sub_choice
+    return submissions
 
 
 def addSpotifyTrack(fresh, threshold, includeAlbums, verbose, sub, tracks):
@@ -429,34 +430,36 @@ def main():
     spotifyObj.trace = False
     if args.verbose:
         print('Welcome to the HipHopHeads Fresh Script')
-    verbose, l, choice, threshold, includeAlbums, fresh = process_args(
+    verbose, limit, choice, threshold, includeAlbums, fresh = process_args(
         args, user)
-    sub_choice = process_subreddit(subreddit, choice, l)
+    sub_choice = process_subreddit(subreddit, choice, limit)
 
     tracks = []
     tracks_array = []
-    for sub in sub_choice:
-        if sub.domain == "open.spotify.com":
-            addSpotifyTrack(fresh, threshold, includeAlbums, verbose, sub, tracks)
+    for submission in sub_choice:
+        if submission.domain == "open.spotify.com":
+            addSpotifyTrack(fresh, threshold, includeAlbums, verbose, submission, tracks)
 
         else:
-            title, tags = filter_tags(sub.title)
+            title, tags = filter_tags(submission.title)
             if 'discussion' not in tags:
                 if 'album' in tags or 'impressions' in tags:
                     # there is a pull request for this feature at the moment
                     # so I will leave it out for now
-                    search = spotifyObj.search(title, type='album')
+
+                    #search = spotifyObj.search(title, type='album') #TODO
+                    pass
                 else:
-                    search = spotifyObj.search(title, type='track')
-                    if search:
-                        track_url = extract_track_url(search)
+                    search_result = spotifyObj.search(title, type='track')
+                    if search_result:
+                        track_url = extract_track_url(search_result)
                         if track_url:
                             otherDomainList = ['youtu.be', 'youtube.com', 'soundcloud.com']
                             # handle non-spotify posts
-                            if sub.domain in otherDomainList and verbose:
-                                print("Post: ", sub.title)
-                                print("URL: ", sub.url)
-                                print("Score: ", sub.score)
+                            if submission.domain in otherDomainList and verbose:
+                                print("Post: ", submission.title)
+                                print("URL: ", submission.url)
+                                print("Score: ", submission.score)
                                 print("------------------------\n")
 
                             tracks.append(track_url)
