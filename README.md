@@ -1,6 +1,6 @@
 # fresh_script
 
-Join us on Discord if you have anything to ask or discuss here : https://discord.gg/HQvcV8
+Join us on Discord if you have anything to ask or discuss here : https://discord.gg/ZAR9ZSp
 
 This program will search for spotify tracks posted in the HipHopHeads subreddit and add them to a playlist of your choice. HipHopHeads is a subreddit dedicated to everything hiphop, including the latest mixtapes, videos, news, and anything else hip hop related from your favorite artists.
 
