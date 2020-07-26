@@ -23,7 +23,7 @@ def home(Name=None):
 
 @app.route('/tracks', methods=['GET', 'POST'])
 def tracks(Name=None):
-    sub_reddit = request.form.get('inputvalue').strip()
+    sub_reddit = request.form.get('inputvalue').replace(" ","")
     tag_choice = request.form.get('taglist')
     reddit_data = ""
     if sub_reddit:
