@@ -5,3 +5,4 @@ __pycache__
 *.ini`
 venv/*
 credentials.json
+.idea/
