@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 praw = "==6.0.0"
-spotipy = "==2.4.4"
+spotipy = "==2.22.1"
 configparser = "==3.5.0"
 cutie = "==0.2.2"
 crontab = "*"
