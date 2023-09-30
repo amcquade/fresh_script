@@ -19,13 +19,20 @@ This program will search for spotify tracks posted in the HipHopHeads subreddit 
 
 This project uses Python3.
 
-You will need to setup a Spotify developer account and register your app and obtain the following information:
+This app is to be downloaded and run on your machine. To do this, you will need to register your local copy of the app with spotify by creating a Spotify developer account.    
+
+Tutorial to setup a Spotify developer account
+1. Connect Spotify Developer to your Spotify account by logging in or creating a free Spotify account [here](https://developer.spotify.com/).
+2. Enter your personal dashboard and click the green “Create a Client ID” button to fill out the form to create an app or in our case integrate with our app
+3. Once you fill out the form, return to your dashboard click on the new app you just created and you should see the necessary details for the information needed(listed below).
+
+You will need to register your app and obtain the following information:
 * client id
 * client secret
 * your spotify username
 * playlist id of the playlist you want to add the tracks to
 * the url you want to redirect to for authentication, i.e. http://google.com/
-  * this must be added under your app settings > Redirect URIs 
+  * this must be added under your app settings > Redirect URIs
 
 You will also need to setup a reddit instance with praw. [Here's](https://pythonforengineers.com/build-a-reddit-bot-part-1/) a useful guide I used to do this.
 
