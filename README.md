@@ -38,7 +38,7 @@ You will also need to setup a reddit instance with praw. [Here's](https://python
 
 ### Setup your Credentials
 
-Download a local copy of the project for the next steps with the following command:
+Download a local copy of the project for the next steps with the following command:             
 git clone https://github.com/skandakumaran/fresh_script.git      
 
 
