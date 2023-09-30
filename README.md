@@ -1,3 +1,11 @@
+## _**Table of Contents**_
+* [What is fresh_script](#fresh_script)
+* [New Features](#NewFeatures!)
+* [Getting Started](#GettingStarted)
+* [Contributing](#Contributions)
+
+
+
 # fresh_script
 
 This program will search for spotify tracks posted in the HipHopHeads subreddit and add them to a playlist of your choice. HipHopHeads is a subreddit dedicated to everything hiphop, including the latest mixtapes, videos, news, and anything else hip hop related from your favorite artists.
