@@ -8,7 +8,7 @@
 
 # fresh_script
 
-This program will search for spotify tracks posted in the HipHopHeads subreddit and add them to a playlist of your choice. HipHopHeads is a subreddit dedicated to everything hiphop, including the latest mixtapes, videos, news, and anything else hip hop related from your favorite artists. You can utilize this program as a means to finding the hottest new hiphop music of the current period.
+This program will search for spotify tracks posted in the HipHopHeads subreddit and add them to a playlist of your choice. HipHopHeads is a subreddit dedicated to everything hiphop, including the latest mixtapes, videos, news, and anything else hip hop related from your favorite artists. You can utilize this program as a means to finding the hottest new hiphop music of the current period. This program is a python script does not run like a tradition github project and/or npm package install. 
 
 ## New Features!
 [Flask](http://flask.pocoo.org/) has recently been added to the project. You can read up on how to get it setup [here](flask.md).
@@ -17,7 +17,7 @@ This program will search for spotify tracks posted in the HipHopHeads subreddit 
 
 ### Prerequisites
 
-This project uses Python3.
+This project uses Python3 and requires either a macOS and/or Linux. Windows is not sufficent for this program. You can download Linux through Windows by downloading [wsl](https://learn.microsoft.com/en-us/windows/wsl/install).
 
 This app is to be downloaded and run on your machine. To do this, you will need to register your local copy of the app with spotify by creating a Spotify developer account.    
 
@@ -118,6 +118,7 @@ We can use cron to automatically run the script periodically in order to keep it
     ```
     0 9 * * * python /home/jsmith/fresh.py
     ```
+    * is assumed to mean every sequence of the period. In this instance on minute 0 of hour 9 are specified; however, the day, month, and day of week are *, allowing for the sequence to be automatically ran agnostic of those period changes.
 
 ## Contributing
 
