@@ -1,8 +1,8 @@
 ## _**Table of Contents**_
 * [What is fresh_script](#fresh_script)
-* [New Features](#NewFeatures!)
-* [Getting Started](#GettingStarted)
-* [Contributing](#Contributions)
+* [New Features](#New-Features!)
+* [Getting Started](#Getting-Started)
+* [Contributing](#Contributing)
 
 
 
