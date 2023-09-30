@@ -19,7 +19,7 @@ This program will search for spotify tracks posted in the HipHopHeads subreddit 
 
 This project uses Python3 and requires either a macOS and/or Linux. Windows is not sufficent for this program. You can download Linux through Windows by downloading [wsl](https://learn.microsoft.com/en-us/windows/wsl/install).
 
-This app is to be downloaded and run on your machine. To do this, you will need to register your local copy of the app with spotify by creating a Spotify developer account.    
+This app is to be downloaded and run on your machine. To do this, you will need to register your local copy of the app with spotify by creating a Spotify developer account. 
 
 Tutorial to setup a Spotify developer account
 1. Connect Spotify Developer to your Spotify account by logging in or creating a free Spotify account [here](https://developer.spotify.com/).
@@ -37,6 +37,10 @@ You will need to register your app and obtain the following information:
 You will also need to setup a reddit instance with praw. [Here's](https://pythonforengineers.com/build-a-reddit-bot-part-1/) a useful guide I used to do this.
 
 ### Setup your Credentials
+
+Download a local copy of the project for the next steps with the following command:
+git clone https://github.com/skandakumaran/fresh_script.git      
+
 
 To set up your credentials, create a new file called `credentials.json` in the root of the project with the following contents:
 
