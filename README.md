@@ -3,15 +3,15 @@
 This program will search for spotify tracks posted in the HipHopHeads subreddit and add them to a playlist of your choice. HipHopHeads is a subreddit dedicated to everything hiphop, including the latest mixtapes, videos, news, and anything else hip hop related from your favorite artists.
 
 # Table of Contents
-[New features](https://github.com/samuel-stjean/fresh_script#new-features)
-[Getting Started](https://github.com/samuel-stjean/fresh_script#getting-started)
+1) [New features](https://github.com/samuel-stjean/fresh_script#new-features)
+2) [Getting Started](https://github.com/samuel-stjean/fresh_script#getting-started)
  - [Prerequisites](https://github.com/samuel-stjean/fresh_script#prerequisites)
  - [Setup your Credentials](https://github.com/samuel-stjean/fresh_script#setup-your-credentials)
  - [Installing dependencies](https://github.com/samuel-stjean/fresh_script#installing-dependencies)
  - [Running the script](https://github.com/samuel-stjean/fresh_script#running-the-script)
  - [Script arguments](https://github.com/samuel-stjean/fresh_script#script-arguments)
  - [Running the script using cron](https://github.com/samuel-stjean/fresh_script#running-the-script-using-cron)
-[Contributing](https://github.com/samuel-stjean/fresh_script#contributing)
+3) [Contributing](https://github.com/samuel-stjean/fresh_script#contributing)
 
 ## New Features!
 [Flask](http://flask.pocoo.org/) has recently been added to the project. You can read up on how to get it setup [here](flask.md).
