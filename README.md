@@ -1,6 +1,14 @@
+## _**Table of Contents**_
+* [What is fresh_script](#fresh_script)
+* [New Features](#New-Features!)
+* [Getting Started](#Getting-Started)
+* [Contributing](#Contributing)
+
+
+
 # fresh_script
 
-This program will search for spotify tracks posted in the HipHopHeads subreddit and add them to a playlist of your choice. HipHopHeads is a subreddit dedicated to everything hiphop, including the latest mixtapes, videos, news, and anything else hip hop related from your favorite artists.
+This program will search for spotify tracks posted in the HipHopHeads subreddit and add them to a playlist of your choice. HipHopHeads is a subreddit dedicated to everything hiphop, including the latest mixtapes, videos, news, and anything else hip hop related from your favorite artists. You can utilize this program as a means to finding the hottest new hiphop music of the current period. This program is a python script does not run like a tradition npm package install; however, it still does require you to clone the repository locally for crediential configuration detailled later.
 
 ## New Features!
 [Flask](http://flask.pocoo.org/) has recently been added to the project. You can read up on how to get it setup [here](flask.md).
@@ -9,19 +17,30 @@ This program will search for spotify tracks posted in the HipHopHeads subreddit 
 
 ### Prerequisites
 
-This project uses Python3.
+This project uses Python3 and requires either a macOS and/or Linux. Windows is not sufficent for this program. You can download Linux through Windows by downloading [wsl](https://learn.microsoft.com/en-us/windows/wsl/install).
 
-You will need to setup a Spotify developer account and register your app and obtain the following information:
+This app is to be downloaded and run on your machine. To do this, you will need to register your local copy of the app with spotify by creating a Spotify developer account. 
+
+Tutorial to setup a Spotify developer account
+1. Connect Spotify Developer to your Spotify account by logging in or creating a free Spotify account [here](https://developer.spotify.com/).
+2. Enter your personal dashboard and click the green “Create a Client ID” button to fill out the form to create an app or in our case integrate with our app
+3. Once you fill out the form, return to your dashboard click on the new app you just created and you should see the necessary details for the information needed(listed below).
+
+You will need to register your app and obtain the following information:
 * client id
 * client secret
 * your spotify username
 * playlist id of the playlist you want to add the tracks to
 * the url you want to redirect to for authentication, i.e. http://google.com/
-  * this must be added under your app settings > Redirect URIs 
+  * this must be added under your app settings > Redirect URIs
 
 You will also need to setup a reddit instance with praw. [Here's](https://pythonforengineers.com/build-a-reddit-bot-part-1/) a useful guide I used to do this.
 
 ### Setup your Credentials
+
+Download a local copy of the project for the next steps with the following command:             
+git clone https://github.com/skandakumaran/fresh_script.git      
+
 
 To set up your credentials, create a new file called `credentials.json` in the root of the project with the following contents:
 
@@ -103,6 +122,7 @@ We can use cron to automatically run the script periodically in order to keep it
     ```
     0 9 * * * python /home/jsmith/fresh.py
     ```
+    * is assumed to mean every sequence of the period. In this instance on minute 0 of hour 9 are specified; however, the day, month, and day of week are *, allowing for the sequence to be automatically ran agnostic of those period changes.
 
 ## Contributing
 
