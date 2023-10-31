@@ -10,6 +10,17 @@
 
 This program will search for spotify tracks posted in the HipHopHeads subreddit and add them to a playlist of your choice. HipHopHeads is a subreddit dedicated to everything hiphop, including the latest mixtapes, videos, news, and anything else hip hop related from your favorite artists. You can utilize this program as a means to finding the hottest new hiphop music of the current period. This program is a python script does not run like a tradition npm package install; however, it still does require you to clone the repository locally for crediential configuration detailled later.
 
+# Table of Contents
+1) [New features](https://github.com/samuel-stjean/fresh_script#new-features)
+2) [Getting Started](https://github.com/samuel-stjean/fresh_script#getting-started)
+ - [Prerequisites](https://github.com/samuel-stjean/fresh_script#prerequisites)
+ - [Setup your Credentials](https://github.com/samuel-stjean/fresh_script#setup-your-credentials)
+ - [Installing dependencies](https://github.com/samuel-stjean/fresh_script#installing-dependencies)
+ - [Running the script](https://github.com/samuel-stjean/fresh_script#running-the-script)
+ - [Script arguments](https://github.com/samuel-stjean/fresh_script#script-arguments)
+ - [Running the script using cron](https://github.com/samuel-stjean/fresh_script#running-the-script-using-cron)
+3) [Contributing](https://github.com/samuel-stjean/fresh_script#contributing)
+
 ## New Features!
 [Flask](http://flask.pocoo.org/) has recently been added to the project. You can read up on how to get it setup [here](flask.md).
 
@@ -126,4 +137,16 @@ We can use cron to automatically run the script periodically in order to keep it
 
 ## Contributing
 
-I appreciate any help and support. Feel free to [fork](https://github.com/amcquade/fresh_script#fork-destination-box) and [create a pull request](https://github.com/amcquade/fresh_script/compare)
+1. [Fork](https://github.com/amcquade/fresh_script#fork-destination-box) the Repository: Start by forking the project's repository to your GitHub account. This creates a copy of the project that you can freely modify. [tutorial](https://www.youtube.com/watch?v=l5NrYIa_aG4&pp=ygUWZm9yayByZXBvc2l0b3J5IGdpdGh1Yg%3D%3D)
+
+2. [Clone](https://www.youtube.com/watch?v=TBoS5Qbv89o&pp=ygUVY2xvbmUgYSBmb3JrIHRvIGxvY2Fs) Your Fork: Clone your forked repository to your local development environment using `git clone`.
+
+3. Create a [Branch](https://www.youtube.com/watch?v=snxybJkFeUo&pp=ygUVY3JlYXRlIGEgYnJhbmNoIGxvY2Fs): Create a new branch for your contribution. Please use a descriptive name.
+
+4. Make & Document Changes: Make your desired changes or additions to the codebase, update the documentation, comments, or README files.
+
+5. [Commit & Push](https://www.youtube.com/watch?v=lYiE5lBS13E&pp=ygUPY29tbWl0IGFuZCBwdXNo) Your Changes: Commit your changes with a clear and concise commit message that describes what your changes accomplish and push your branch with your changes to your GitHub fork.
+
+6. [Create a Pull Request](https://github.com/amcquade/fresh_script/compare): Go to the original project's repository and create a new Pull Request from your forked branch. Provide a clear description of your changes in the PR description.
+
+I appreciate any help and support. Thank you! 
